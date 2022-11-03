@@ -1,0 +1,32 @@
+# 应用全局配置
+sei:
+  application:
+    env: DEV
+    code: wjaps-one-api
+    version: '@project_version@'
+    description: '@project_description@'
+  mock: # 本地调试的当前用户配置
+    user:
+      tenant-code: DONLIM
+      account: admin
+
+# spring配置
+spring:
+  application:
+    name: ${sei.application.code}
+  cloud:
+    config:
+      # 配置中心地址
+      enabled: true
+      uri: http://10.233.0.171/sei-manager/configserver
+      token: BiWWR1gWtU7lDJP
+      profile: ${sei.application.env}
+      name: ${spring.application.name}
+    zookeeper:
+      # zookeeper注册中心开关
+      enabled: true
+      # zk 地址
+      connect-string: 10.233.0.170:2181
+
+
+

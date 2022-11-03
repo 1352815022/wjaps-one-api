@@ -1,0 +1,5 @@
+rootProject.name = 'wjaps-one-api'
+
+include 'wjaps-one-api-service'
+include 'wjaps-one-api-api'
+
