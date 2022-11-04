@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><!--File DONLIM_MCAS_QUERYSYNC.wsdl, application DONLIM_MCAS2_QUERYSYNC--><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="DONLIM_MCAS_QUERYSYNC" targetNamespace="http://www.example.org/DONLIM_MCAS_QUERYSYNC/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.example.org/DONLIM_MCAS_QUERYSYNC/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <generatedXSD location="DONLIM_MCAS_QUERYSYNC_InlineSchema1.xsd"/>
+        <binding hasEncoding="false" imported="true" name="DONLIM_MCAS_QUERYSYNCSOAP" originalBindingStyle="document"/>
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsdl:types>
+
+      <xsd:schema targetNamespace="http://www.example.org/DONLIM_MCAS_QUERYSYNC/">
+<xsd:include schemaLocation="http://10.233.0.138:7801/WS/DONLIM/ESB/DONLIM_MCAS2_QUERYSYNC?xsd=xsd0"/>
+    </xsd:schema>
+    </wsdl:types>
+  <wsdl:message name="DONLIM_MCAS_QUERYSYNCRequest">
+    <wsdl:part element="tns:DONLIM_MCAS_QUERYSYNC" name="WsReqMsg"/>
+  </wsdl:message>
+  <wsdl:message name="DONLIM_MCAS_QUERYSYNCResponse">
+    <wsdl:part element="tns:DONLIM_MCAS_QUERYSYNCResponse" name="WsReqMsg"/>
+  </wsdl:message>
+  <wsdl:portType name="DONLIM_MCAS_QUERYSYNC">
+    <wsdl:operation name="DONLIM_MCAS_QUERYSYNC">
+      <wsdl:input message="tns:DONLIM_MCAS_QUERYSYNCRequest"/>
+      <wsdl:output message="tns:DONLIM_MCAS_QUERYSYNCResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DONLIM_MCAS_QUERYSYNCSOAP" type="tns:DONLIM_MCAS_QUERYSYNC">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="DONLIM_MCAS_QUERYSYNC">
+      <soap:operation soapAction="http://www.example.org/DONLIM_MCAS_QUERYSYNC/DONLIM_MCAS_QUERYSYNC"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DONLIM_MCAS_QUERYSYNC">
+    <wsdl:port binding="tns:DONLIM_MCAS_QUERYSYNCSOAP" name="DONLIM_MCAS_QUERYSYNCSOAP">
+      <soap:address location="http://10.233.0.138:7801/WS/DONLIM/ESB/DONLIM_MCAS2_QUERYSYNC"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

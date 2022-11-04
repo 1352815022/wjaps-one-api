@@ -4,6 +4,10 @@ apply plugin: 'io.spring.dependency-management'
 dependencies {
     // SEI平台依赖包
     compile("com.changhong.sei:sei-core-api:$sei_version")
+    // EasyExcel
+    compile("com.alibaba:easyexcel:3.1.0")
+    implementation 'org.projectlombok:lombok:1.18.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
 }
 
 //打包源代码jar包
