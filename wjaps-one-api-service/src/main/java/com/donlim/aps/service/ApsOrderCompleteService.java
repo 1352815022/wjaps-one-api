@@ -159,7 +159,7 @@ public class ApsOrderCompleteService extends BaseEntityService<ApsOrderComplete>
                 DecimalFormat df = new DecimalFormat("0.00");
                 apsOrderComplete.setCompletePercent(df.format(percent)+"%");
             }
-            apsOrderComplete.setCompany(CompanyEnum.WJ2_SCM.getName());
+            apsOrderComplete.setCompany(CompanyEnum.WJ1_SCM.getName());
             apsOrderComplete.setOrderNo(deliveryOrderDto.getOrderNo());
             apsOrderComplete.setProductModel(deliveryOrderDto.getProductModel());
             OperateResultWithData<ApsOrderComplete> save = save(apsOrderComplete);

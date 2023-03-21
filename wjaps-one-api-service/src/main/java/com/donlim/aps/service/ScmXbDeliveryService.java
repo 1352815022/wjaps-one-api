@@ -81,7 +81,7 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
         try {
             // 自产SCM
             LocalDate now = LocalDate.now();
-            List<ScmXbDelivery> list = ScmConnector.getDeliveryData(CompanyEnum.WJ2_SCM.getCode(), now);
+            List<ScmXbDelivery> list = ScmConnector.getDeliveryData(CompanyEnum.WJ1_SCM.getCode(), now);
             // 委外SCM
             //List<ScmXbDelivery> purchaseList = ScmConnector.getPurchaseData(CompanyEnum.WJ2_SCM.getName(), LocalDate.now());
             //list.addAll(purchaseList);
@@ -113,7 +113,7 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
             dao.save(oldList);
             List<String> parentIds = oldList.stream().map(a -> a.getId()).collect(Collectors.toList());
             //更新送货明细
-            scmXbDeliveryPlanService.updateDeliveryDetail(CompanyEnum.WJ2_SCM, LocalDate.now(), parentIds);
+            scmXbDeliveryPlanService.updateDeliveryDetail(CompanyEnum.WJ1_SCM, LocalDate.now(), parentIds);
             //生成采购委外计划
             LogUtil.bizLog("开始生成采购计划");
             calcPurchaseDeliveryDate(now);
@@ -366,7 +366,7 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
             queryDto.setEndDate(LocalDate.now());
             queryDto.setStartDate(LocalDate.now());
         }
-        queryDto.setSupplierCode(CompanyEnum.WJ2_SCM.getCode());
+        queryDto.setSupplierCode(CompanyEnum.WJ1_SCM.getCode());
         List<ScmXbDelivery> deliveryRecordList = dao.queryDelivery(queryDto);
         List<MaterialRequireDto> requireList = new ArrayList<>();
         for (ScmXbDelivery scmXbDelivery : deliveryRecordList) {

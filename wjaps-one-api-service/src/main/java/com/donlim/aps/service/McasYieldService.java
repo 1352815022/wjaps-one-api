@@ -50,8 +50,8 @@ public class McasYieldService extends BaseEntityService<McasYield> {
             if(LocalDateTime.now().getHour()<8){
                 date=LocalDate.now().plusDays(-1);
             }
-            List<McasYield> yieldData = McasConnector.getCYYieldData(CompanyEnum.WJ2_MCAS.getCode(), date);
-            List<McasYield>manualYieldData=McasConnector.getManualYieldData(CompanyEnum.WJ2_MCAS.getCode(), date);
+            List<McasYield> yieldData = McasConnector.getCYYieldData(CompanyEnum.WJ1_MCAS.getCode(), date);
+            List<McasYield>manualYieldData=McasConnector.getManualYieldData(CompanyEnum.WJ1_MCAS.getCode(), date);
             dao.deleteByDateEquals(date);
             yieldData.addAll(manualYieldData);
             dao.save(yieldData);

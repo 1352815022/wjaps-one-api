@@ -21,7 +21,7 @@ public enum CompanyEnum {
     /**
      *五金一MCAS编码
      */
-    WJ1_MCAS("01064721","五金件一公司");
+    WJ1_MCAS("01067903","五金件一公司");
     private String code;
     private String name;
 
