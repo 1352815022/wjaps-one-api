@@ -38,8 +38,8 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
      * @return
      */
     @Query("select new com.donlim.aps.entity.cust.U9OrderCust(p,d,m) from U9ProduceOrder p" +
-            " inner join U9Material m on m.id = p.material.id and p.orgId = m.orgId  " +
-            " left join ScmXbDelivery d  on d.orderNo = p.soId and d.materialCode = m.code and p.orgId = d.orgId and d.type = '1' " +
+            " inner join U9Material m on m.id = p.material.id  " +
+            " left join ScmXbDelivery d  on d.orderNo = p.soId and d.materialCode = m.code  and d.type = '1' " +
             " where not exists (select 1 from ApsOrder i where i.orderNo = p.docNo )")
     List<U9OrderCust> queryInnerOrderAndNotExists();
 
