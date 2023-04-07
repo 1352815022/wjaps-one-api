@@ -5,6 +5,7 @@ apply plugin: 'io.spring.dependency-management'
 ext {
     // 启动类
     MainClass = 'com.donlim.aps.RestApplication'
+    mapstructVersion = "1.5.3.Final"
 }
 
 dependencyManagement {
@@ -29,6 +30,12 @@ dependencies {
     testCompile("com.changhong.sei:sei-test-starter:$sei_version")
     implementation 'org.projectlombok:lombok:1.18.8'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    // If you are using mapstruct in test code
+    testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    implementation group: 'cn.hutool', name: 'hutool-all', version: '5.8.4'
+
 }
 
 // 处理资源配置文件

@@ -59,4 +59,8 @@ public interface ApsOrderDao extends BaseEntityDao<ApsOrder> {
     List<OrderAndScm> findWithScmAndU9Produce();
 
 
+
+    List<ApsOrder> findByType(ApsOrderType inner);
+
+
 }

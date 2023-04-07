@@ -106,6 +106,8 @@ public class U9ProduceOrder extends BaseAuditableEntity implements Serializable 
     private String tenantCode;
 
 
+
+
     public String getDocNo() {
         return docNo;
     }

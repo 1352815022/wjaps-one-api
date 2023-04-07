@@ -68,7 +68,8 @@ public class ApsOrderController extends BaseEntityController<ApsOrder, ApsOrderD
     @Transactional(rollbackFor = Exception.class)
     public ResultData<String> initApsOrder() {
         LogUtil.bizLog("后台任务由【{}】执行完成！", ContextUtil.getSessionUser());
-        service.pullData();
+        //service.pullData();
+        service.pullData_v2();
         return ResultDataUtil.success("执行成功");
     }
 

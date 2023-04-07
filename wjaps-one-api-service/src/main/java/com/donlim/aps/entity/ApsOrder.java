@@ -164,7 +164,7 @@ public class ApsOrder extends BaseAuditableEntity implements Serializable {
     @Column(name = "order_qty")
     private BigDecimal orderQty;
     /**
-     * 欠入库数
+     * 欠发数
      */
     @Column(name = "owe_qty")
     private BigDecimal oweQty;
@@ -208,5 +208,29 @@ public class ApsOrder extends BaseAuditableEntity implements Serializable {
 
     @Column(name = "product_model")
     private String productModel;
+
+    /**
+     * 已完成数量-冗余
+     */
+    @Column(name = "finish_qty")
+    private BigDecimal finishQty;
+
+    ///**
+    // * 料品
+    // */
+    //@OneToOne(fetch = FetchType.EAGER)
+    //@JoinColumn(name = "order_no" , referencedColumnName = "doc_no" ,insertable = false,updatable = false )
+    //private U9ProduceOrder u9ProduceOrder;
+    //
+    //
+    ///**
+    // * 料品
+    // */
+    //@OneToOne(fetch = FetchType.EAGER)
+    //@JoinColumn(name = "scm_id" , referencedColumnName = "id" ,insertable = false,updatable = false )
+    //private ScmXbDelivery scmXbDelivery;
+
+
+
 
 }

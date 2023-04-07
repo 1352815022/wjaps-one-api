@@ -1,5 +1,6 @@
 package com.donlim.aps.entity.cust;
 
+import com.donlim.aps.entity.ApsOrderExt;
 import com.donlim.aps.entity.ScmXbDelivery;
 import com.donlim.aps.entity.U9Material;
 
@@ -19,10 +20,18 @@ public class ScmOrderAndMaterialCust implements Serializable {
 
     private U9Material u9Material;
 
+    private ApsOrderExt apsOrderExt;
+
     public ScmOrderAndMaterialCust(ScmXbDelivery scmXbDelivery, U9Material u9Material) {
         this.scmXbDelivery = scmXbDelivery;
         this.u9Material = u9Material;
     }
+    public ScmOrderAndMaterialCust(ScmXbDelivery scmXbDelivery, U9Material u9Material,ApsOrderExt apsOrderExt) {
+        this.scmXbDelivery = scmXbDelivery;
+        this.u9Material = u9Material;
+        this.apsOrderExt = apsOrderExt;
+    }
+
 
     public ScmXbDelivery getScmXbDelivery() {
         return scmXbDelivery;
@@ -38,5 +47,13 @@ public class ScmOrderAndMaterialCust implements Serializable {
 
     public void setU9Material(U9Material u9Material) {
         this.u9Material = u9Material;
+    }
+
+    public ApsOrderExt getApsOrderExt() {
+        return apsOrderExt;
+    }
+
+    public void setApsOrderExt(ApsOrderExt apsOrderExt) {
+        this.apsOrderExt = apsOrderExt;
     }
 }

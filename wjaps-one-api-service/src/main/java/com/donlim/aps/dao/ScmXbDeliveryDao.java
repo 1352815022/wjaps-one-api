@@ -3,15 +3,14 @@ package com.donlim.aps.dao;
 import com.changhong.sei.core.dao.BaseEntityDao;
 import com.donlim.aps.dto.ScmXbDeliveryQueryDto;
 import com.donlim.aps.entity.ScmXbDelivery;
-import com.donlim.aps.entity.cust.OrderAndScm;
-import com.donlim.aps.entity.cust.ScmOrderAndMaterialCust;
-import com.donlim.aps.entity.cust.U9OrderCust;
+import com.donlim.aps.entity.cust.*;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /**
  * scm送货需求(ScmXbDelivery)数据库访问类
@@ -26,8 +25,9 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
      * 获取委外与采购订单(新增)
      * @return
      */
-    @Query("select new com.donlim.aps.entity.cust.ScmOrderAndMaterialCust(d,m) " +
+    @Query("select new com.donlim.aps.entity.cust.ScmOrderAndMaterialCust(d,m,e) " +
             "from ScmXbDelivery d inner join U9Material m on d.materialCode = m.code and d.orgId = m.orgId " +
+            "left join ApsOrderExt e on e.orderNo = d.orderNo " +
             "where d.type = '0' " +
             "and not exists (select 1 from ApsOrder o where d.id = o.scmId )")
     List<ScmOrderAndMaterialCust> queryPurchaseOrder();
@@ -37,11 +37,24 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
      * SCM
      * @return
      */
-    @Query("select new com.donlim.aps.entity.cust.U9OrderCust(p,d,m) from U9ProduceOrder p" +
+    @Query("select new com.donlim.aps.entity.cust.U9OrderCust(p,d,m,e) from U9ProduceOrder p" +
             " inner join U9Material m on m.id = p.material.id  " +
             " left join ScmXbDelivery d  on d.orderNo = p.soId and d.materialCode = m.code  and d.type = '1' " +
+            " left join ApsOrderExt e  on e.orderNo = p.docNo  " +
             " where not exists (select 1 from ApsOrder i where i.orderNo = p.docNo )")
     List<U9OrderCust> queryInnerOrderAndNotExists();
+    /**
+     * 获取内部待排数据(用于新增) v2.0
+     * SCM
+     * @return
+     */
+    @Query(value = "select * from u9_produce_order p " +
+            "inner join u9_material m on m.id = p.material_id " +
+            "left join scm_xb_delivery d  on d.order_no = p.so_id and d.material_code  = m.code  and d.type = '1'" +
+            "left join aps_order_ext e  on d.order_no = e.order_no " +
+            "where not exists (select 1 from aps_order i where i.order_no = p.doc_no )", nativeQuery = true)
+    List<U9OrderCust> queryInnerOrderAndNotExists_2();
+
 
     /**
      * 获取内部待排数据(用于更新)
@@ -54,6 +67,37 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
             " where i.type= 'INNER' ")
     List<OrderAndScm> queryInnerOrderAndExists();
 
+
+
+    @Query(value = "select " +
+            "    i.* ," +
+            "    o.qty as u9Qty ," +
+            "    o.total_complete_qty as u9TotalCompleteQty , " +
+            "    o.status as u9orderStatus ," +
+            "    d.delivery_start_date as deliveryStartDate , " +
+            "    d.delivery_end_date  as deliveryEndDate, " +
+            "    d.product_model  as scmXbProductModel, " +
+            "    e.finish_qty  as finishQty " +
+            "from " +
+            "    aps_order i  " +
+            "left join " +
+            "    u9_produce_order o  " +
+            "        on i.order_no = o.doc_no  " +
+            "left join " +
+            "    scm_xb_delivery d " +
+            "        on i.scm_id = d.id " +
+            "        and d.type = '1' " +
+            "left join " +
+            "    aps_order_ext e " +
+            "        on i.order_no = e.order_no " +
+            "where " +
+            "    i.type= 'INNER'   " , nativeQuery = true)
+    List<Map<String,Object>> queryInnerOrderAndExists_v2();
+
+
+
+
+
     /**
      * 获取委外与采购订单(更新)
      * @return
@@ -62,6 +106,21 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
             "from ScmXbDelivery d inner join ApsOrder o on o.scmId = d.id " +
             "where d.type = '0' " )
     List<OrderAndScm> queryPurchaseOrderAndExists();
+
+    /**
+     * 获取委外与采购订单(更新)
+     * @return
+     */
+    @Query(value = "select o.*, " +
+            "d.owe_qty as scmOweQty,\n" +
+            "d.delivery_qty as scmDeliveryQty,\n" +
+            "d.delivery_start_date as deliveryStartDate ,\n" +
+            "d.delivery_end_date  as deliveryEndDate,\n" +
+            "d.product_model  as scmXbProductModel \n" +
+            "from  scm_xb_delivery d inner join  aps_order o on o.scm_id  = d.id\n" +
+            "where d.type = '0'  " , nativeQuery = true )
+    List<Map<String,Object>> queryPurchaseOrderAndExists_v2();
+
 
     /**
      * 根据po行号查询SCM送货单
