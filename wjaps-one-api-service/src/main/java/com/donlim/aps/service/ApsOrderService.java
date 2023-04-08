@@ -69,6 +69,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     private ApsOrderService getSelfService(){
         return SpringUtil.getBean(this.getClass());   //SpringUtil工具类见下面代码
     }
+·
+    private final Integer partitionSize = 1000;
     /**
      * 重写版
      * 新增:
@@ -178,9 +180,6 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         List<U9OrderCust> orderNotExists = scmXbDeliveryDao.queryInnerOrderAndNotExists();
         long t3 = System.currentTimeMillis();
         LogUtil.bizLog("queryInnerOrderAndNotExists耗时{}", t3 - t2);
-
-
-
         //内排新增
         for (U9OrderCust u9OrderCust : orderNotExists) {
             ApsOrder apsOrder = new ApsOrder();
@@ -336,7 +335,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         List<Map<String,Object>>  orderExists = scmXbDeliveryDao.queryInnerOrderAndExists_v2();
         List<OrderAndScmV2> orderExistDtos = new ArrayList<OrderAndScmV2>(orderExists.size());
         //这里会有内存溢出、处理方法做分片
-        List<List<Map<String, Object>>> partitionLists = Lists.partition(orderExists, 1000);
+        List<List<Map<String, Object>>> partitionLists = Lists.partition(orderExists, partitionSize);
         if (partitionLists.size() > 0) {
             for (List<Map<String, Object>> partitionList : partitionLists) {
                 partitionList = partitionList.stream().map(MapUtil::toCamelCaseMap).collect(Collectors.toList());
@@ -345,10 +344,6 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
                 orderExistDtos.addAll(partitionDtos);
             }
         }
-        //orderExists = orderExists.stream().map(MapUtil::toCamelCaseMap).collect(Collectors.toList());
-        //String irsStr = JSON.toJSONString(CamelCaseList);
-        //List<OrderAndScmV2> orderExistDtos = JSON.parseArray(irsStr, OrderAndScmV2.class);
-        //orderExistDtos = orderExistDtos.subList(0,1000);
         return orderExistDtos;
     }
 
