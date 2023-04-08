@@ -334,18 +334,20 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
      */
     public List<OrderAndScmV2> queryInnerOrderAndExistsDto() {
         List<Map<String,Object>>  orderExists = scmXbDeliveryDao.queryInnerOrderAndExists_v2();
-        List<Map<String,Object>>  CamelCaseList= new ArrayList<Map<String,Object>>(orderExists.size());
+        List<OrderAndScmV2> orderExistDtos = new ArrayList<OrderAndScmV2>(orderExists.size());
         //这里会有内存溢出、处理方法做分片
         List<List<Map<String, Object>>> partitionLists = Lists.partition(orderExists, 1000);
         if (partitionLists.size() > 0) {
             for (List<Map<String, Object>> partitionList : partitionLists) {
                 partitionList = partitionList.stream().map(MapUtil::toCamelCaseMap).collect(Collectors.toList());
-                CamelCaseList.addAll(partitionList);
+                String irsStr = JSON.toJSONString(partitionList);
+                List<OrderAndScmV2> partitionDtos = JSON.parseArray(irsStr, OrderAndScmV2.class);
+                orderExistDtos.addAll(partitionDtos);
             }
         }
         //orderExists = orderExists.stream().map(MapUtil::toCamelCaseMap).collect(Collectors.toList());
-        String irsStr = JSON.toJSONString(CamelCaseList);
-        List<OrderAndScmV2> orderExistDtos = JSON.parseArray(irsStr, OrderAndScmV2.class);
+        //String irsStr = JSON.toJSONString(CamelCaseList);
+        //List<OrderAndScmV2> orderExistDtos = JSON.parseArray(irsStr, OrderAndScmV2.class);
         //orderExistDtos = orderExistDtos.subList(0,1000);
         return orderExistDtos;
     }
