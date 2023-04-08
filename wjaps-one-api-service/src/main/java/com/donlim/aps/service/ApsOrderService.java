@@ -21,6 +21,7 @@ import com.donlim.aps.entity.*;
 import com.donlim.aps.entity.cust.*;
 import com.donlim.aps.util.NumberUtils;
 import com.donlim.aps.util.ResultEnum;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -92,9 +93,9 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
                 .build();
         ////内排更新
         long t3 = System.currentTimeMillis();
-        //List<ApsOrder> innerOrders = getSelfService().innerOrderModifyHandler(innerOrderParam);
+        List<ApsOrder> innerOrders = getSelfService().innerOrderModifyHandler(innerOrderParam);
         long t4 = System.currentTimeMillis();
-        //LogUtil.bizLog("innerOrderModifyHandler耗时{}", t4 - t3);
+        LogUtil.bizLog("innerOrderModifyHandler耗时{}", t4 - t3);
         //委外更新
         List<ApsOrder> outerOrders = getSelfService().outerOrderModifyHandler();
         long t5= System.currentTimeMillis();
@@ -102,14 +103,14 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         //内排新增
         List<ApsOrder> innerOrdersNew =  getSelfService().innerOrderAddHandler(innerOrderParam);
         long t6= System.currentTimeMillis();
-        LogUtil.bizLog("innerOrderAddHandle耗时r{}", t6 - t5);
+        LogUtil.bizLog("innerOrderAddHandle耗时{}", t6 - t5);
         //委外新增
         List<ApsOrder> outerOrdersNew = getSelfService().outerOrderAddHandler(innerOrderParam);
         long t7= System.currentTimeMillis();
         LogUtil.bizLog("outerOrderAddHandler耗时{}", t7 - t6);
 
-        //orderList.addAll(outerOrders);
-        //orderList.addAll(innerOrders);
+        orderList.addAll(outerOrders);
+        orderList.addAll(innerOrders);
         orderList.addAll(innerOrdersNew);
         orderList.addAll(outerOrdersNew);
         //更新持久化
@@ -279,7 +280,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         List<ApsOrganize> apsOrganizes = innerOrderParam.getApsOrganizes();
 
         List<OrderAndScmV2> orderExistDtos = getSelfService().queryInnerOrderAndExistsDto();
-        int i = 0;
+
         for (OrderAndScmV2 orderExist : orderExistDtos) {
             //复制对象
             ApsOrder apsOrder = new ApsOrder();
@@ -321,7 +322,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             }
 
 
-            i++;
+            //i++;
             //System.out.println(i);
         }
         return orderList;
@@ -333,8 +334,17 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
      */
     public List<OrderAndScmV2> queryInnerOrderAndExistsDto() {
         List<Map<String,Object>>  orderExists = scmXbDeliveryDao.queryInnerOrderAndExists_v2();
-        orderExists = orderExists.stream().map(MapUtil::toCamelCaseMap).collect(Collectors.toList());
-        String irsStr = JSON.toJSONString(orderExists);
+        List<Map<String,Object>>  CamelCaseList= new ArrayList<Map<String,Object>>(orderExists.size());
+        //这里会有内存溢出、处理方法做分片
+        List<List<Map<String, Object>>> partitionLists = Lists.partition(orderExists, 1000);
+        if (partitionLists.size() > 0) {
+            for (List<Map<String, Object>> partitionList : partitionLists) {
+                partitionList = partitionList.stream().map(MapUtil::toCamelCaseMap).collect(Collectors.toList());
+                CamelCaseList.addAll(partitionList);
+            }
+        }
+        //orderExists = orderExists.stream().map(MapUtil::toCamelCaseMap).collect(Collectors.toList());
+        String irsStr = JSON.toJSONString(CamelCaseList);
         List<OrderAndScmV2> orderExistDtos = JSON.parseArray(irsStr, OrderAndScmV2.class);
         //orderExistDtos = orderExistDtos.subList(0,1000);
         return orderExistDtos;
