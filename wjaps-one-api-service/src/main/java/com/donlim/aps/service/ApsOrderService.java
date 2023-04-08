@@ -69,7 +69,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     private ApsOrderService getSelfService(){
         return SpringUtil.getBean(this.getClass());   //SpringUtil工具类见下面代码
     }
-·
+
     private final Integer partitionSize = 1000;
     /**
      * 重写版
