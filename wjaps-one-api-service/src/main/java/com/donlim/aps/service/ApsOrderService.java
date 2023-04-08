@@ -93,12 +93,12 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         ////内排更新
         long t3 = System.currentTimeMillis();
         //List<ApsOrder> innerOrders = getSelfService().innerOrderModifyHandler(innerOrderParam);
-        //long t4 = System.currentTimeMillis();
+        long t4 = System.currentTimeMillis();
         //LogUtil.bizLog("innerOrderModifyHandler耗时{}", t4 - t3);
-        ////委外更新
-        //List<ApsOrder> outerOrders = getSelfService().outerOrderModifyHandler();
+        //委外更新
+        List<ApsOrder> outerOrders = getSelfService().outerOrderModifyHandler();
         long t5= System.currentTimeMillis();
-        //LogUtil.bizLog("outerOrderModifyHandler耗时{}", t5 - t4);
+        LogUtil.bizLog("outerOrderModifyHandler耗时{}", t5 - t4);
         //内排新增
         List<ApsOrder> innerOrdersNew =  getSelfService().innerOrderAddHandler(innerOrderParam);
         long t6= System.currentTimeMillis();
