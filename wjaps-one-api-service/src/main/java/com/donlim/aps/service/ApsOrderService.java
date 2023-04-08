@@ -90,26 +90,26 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
                 .apsOrganizes(apsOrganizes)
                 .u9MaterialList(u9MaterialList)
                 .build();
-        //内排更新
+        ////内排更新
         long t3 = System.currentTimeMillis();
-        List<ApsOrder> innerOrders = getSelfService().innerOrderModifyHandler(innerOrderParam);
-        long t4 = System.currentTimeMillis();
-        LogUtil.bizLog("innerOrderModifyHandler耗时{}", t4 - t3);
-        //委外更新
-        List<ApsOrder> outerOrders = getSelfService().outerOrderModifyHandler();
+        //List<ApsOrder> innerOrders = getSelfService().innerOrderModifyHandler(innerOrderParam);
+        //long t4 = System.currentTimeMillis();
+        //LogUtil.bizLog("innerOrderModifyHandler耗时{}", t4 - t3);
+        ////委外更新
+        //List<ApsOrder> outerOrders = getSelfService().outerOrderModifyHandler();
         long t5= System.currentTimeMillis();
-        LogUtil.bizLog("outerOrderModifyHandler{}", t5 - t4);
+        //LogUtil.bizLog("outerOrderModifyHandler耗时{}", t5 - t4);
         //内排新增
         List<ApsOrder> innerOrdersNew =  getSelfService().innerOrderAddHandler(innerOrderParam);
         long t6= System.currentTimeMillis();
-        LogUtil.bizLog("innerOrderAddHandler{}", t6 - t5);
+        LogUtil.bizLog("innerOrderAddHandle耗时r{}", t6 - t5);
         //委外新增
         List<ApsOrder> outerOrdersNew = getSelfService().outerOrderAddHandler(innerOrderParam);
         long t7= System.currentTimeMillis();
-        LogUtil.bizLog("outerOrderAddHandler{}", t7 - t6);
+        LogUtil.bizLog("outerOrderAddHandler耗时{}", t7 - t6);
 
-        orderList.addAll(outerOrders);
-        orderList.addAll(innerOrders);
+        //orderList.addAll(outerOrders);
+        //orderList.addAll(innerOrders);
         orderList.addAll(innerOrdersNew);
         orderList.addAll(outerOrdersNew);
         //更新持久化
