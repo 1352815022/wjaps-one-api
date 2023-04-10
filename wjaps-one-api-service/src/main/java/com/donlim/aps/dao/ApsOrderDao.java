@@ -57,10 +57,16 @@ public interface ApsOrderDao extends BaseEntityDao<ApsOrder> {
             " inner  join U9Material m on ao.materialId =  m.id " +
             " where  not exists (select 1 from ApsOrderPlan aop where ao.id = aop.orderId) ")
     List<OrderAndScm> findWithScmAndU9Produce();
-
-
-
     List<ApsOrder> findByType(ApsOrderType inner);
+
+    /**
+     * 获取生产单
+     * @param orderNoList
+     * @return
+     */
+    List<ApsOrder>findByOrderNoIn(List<String>orderNoList);
+
+
 
 
 }
