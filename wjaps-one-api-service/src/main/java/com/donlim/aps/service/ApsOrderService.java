@@ -330,6 +330,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
                 apsOrder.setOweQty(NumberUtils.getBigDecimalValue(u9ProduceOrder.getQty()).subtract(
                         NumberUtils.getBigDecimalValue(u9ProduceOrder.getTotalCompleteQty())));
                 apsOrder.setU9Status(U9OrderStatus.transformStatus(orderExist.getU9ProduceOrder().getStatus()));
+                apsOrder.setProduceQty(u9ProduceOrder.getQty());
             }
             //ScmXbDelivery scmXbDelivery = orderExist.getScmXbDelivery();
             ScmXbDelivery scmXbDelivery = orderExist.buildScmXbDelivery(orderExist);
