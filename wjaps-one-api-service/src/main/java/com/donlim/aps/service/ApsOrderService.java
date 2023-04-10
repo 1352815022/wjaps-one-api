@@ -91,7 +91,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         long t1 = System.currentTimeMillis();
         u9MoFinishService.countU9FinishQtyHandler();
         long t2= System.currentTimeMillis();
-        LogUtil.bizLog("countU9FinishQtyHandler{}", t2 - t1);
+        LogUtil.bizLog("countU9FinishQtyHandler耗时{}", t2 - t1);
 
         List<ApsOrder> orderList = new ArrayList<>();
         //U9料品
