@@ -42,13 +42,22 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
     }
 
     private final Integer partitionSize = 1000;
-
+    private final Integer partitionCountLimit = 5000;
     /**
      * 根据订单与日期维度U9完工数
      */
     public void countU9FinishQtyHandler() {
         List<ApsOrderExt> apsOrderExts = countU9FinishQtyQuery();
-        apsOrderExtService.save(apsOrderExts);
+        //数据量大于5000做分片处理，避免大事务
+        if (apsOrderExts.size() > partitionCountLimit) {
+            List<List<ApsOrderExt>> partition = Lists.partition(apsOrderExts, partitionSize);
+            for (List<ApsOrderExt> orderExts : partition) {
+                apsOrderExtService.save(orderExts);
+            }
+        }else{
+            apsOrderExtService.save(apsOrderExts);
+        }
+
     }
 
 

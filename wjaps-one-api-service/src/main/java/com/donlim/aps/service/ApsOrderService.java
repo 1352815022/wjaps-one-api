@@ -73,9 +73,10 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         return SpringUtil.getBean(this.getClass());   //SpringUtil工具类见下面代码
     }
 
-    private final Integer partitionSize = 1000;
+    private final Integer partitionSize = 500;
+    private final Integer partitionCountLimit = 1000;
     /**
-     * 重写版
+     * 2.0
      * 新增:
      * * 拉取u9_produce_order生产单数据至apsOrder type = INNER
      * * 拉取scm_xb_delivery type = 0委外单数据至apsOrder type = OUTER
@@ -125,13 +126,28 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         orderList.addAll(innerOrders);
         orderList.addAll(innerOrdersNew);
         orderList.addAll(outerOrdersNew);
-        //更新持久化
+        //分片持久化
         long t8= System.currentTimeMillis();
-        getSelfService().save(orderList);
+        getSelfService().orderSaveAll(orderList);
         long t9= System.currentTimeMillis();
         LogUtil.bizLog("持久化耗时{}", t9 - t8);
         LogUtil.bizLog("总耗时{}", t9 - t1);
 
+    }
+
+    /**
+     * 分片处理，避免大事务
+     * @param orderList
+     */
+    public void orderSaveAll(List<ApsOrder> orderList) {
+        if (orderList.size() > partitionCountLimit) {
+            List<List<ApsOrder>> partition = Lists.partition(orderList, partitionSize);
+            for (List<ApsOrder> apsOrders : partition) {
+                getSelfService().save(apsOrders);
+            }
+        }else{
+            getSelfService().save(orderList);
+        }
     }
 
     /**
