@@ -12,17 +12,16 @@ import com.changhong.sei.core.utils.ResultDataUtil;
 import com.donlim.aps.api.ApsOrderApi;
 import com.donlim.aps.dto.*;
 import com.donlim.aps.entity.ApsOrder;
-import com.donlim.aps.service.ApsOrderPlanService;
-import com.donlim.aps.service.ApsOrderPlanSonService;
-import com.donlim.aps.service.ApsOrderService;
-import com.donlim.aps.service.U9ProduceOrderService;
+import com.donlim.aps.service.*;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,7 +56,7 @@ public class ApsOrderController extends BaseEntityController<ApsOrder, ApsOrderD
     @Autowired
     private U9ProduceOrderService u9ProduceOrderService;
     @Autowired
-    private ApsOrderPlanSonService planSonService;
+    private U9MoFinishService u9MoFinishService;
 
     @Override
     public BaseEntityService<ApsOrder> getService() {
@@ -65,7 +64,7 @@ public class ApsOrderController extends BaseEntityController<ApsOrder, ApsOrderD
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    //@Transactional(rollbackFor = Exception.class)
     public ResultData<String> initApsOrder() {
         LogUtil.bizLog("五金一aps后台任务由【{}】执行完成！", ContextUtil.getSessionUser());
         //service.pullData();
@@ -74,6 +73,13 @@ public class ApsOrderController extends BaseEntityController<ApsOrder, ApsOrderD
         return ResultDataUtil.success("执行成功");
     }
 
+
+    @PostMapping(path = "finishQtyHandler" , consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResultData<String> finishQtyHandler() {
+        //统计完工数
+        u9MoFinishService.countU9FinishQtyHandler();
+        return ResultDataUtil.success("执行成功");
+    }
     /**
      * 修改内排单据状态，同时修改排产单状态
      * @param dtos

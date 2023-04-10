@@ -7,10 +7,13 @@ import com.donlim.aps.dao.ApsOrderExtDao;
 import com.donlim.aps.entity.ApsOrder;
 import com.donlim.aps.entity.ApsOrderExt;
 import com.donlim.aps.entity.U9MoFinish;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -32,7 +35,8 @@ public class ApsOrderExtService   extends BaseEntityService<ApsOrderExt> {
     }
 
 
+    @Transactional
     public void saveU9TotalHandler(List<ApsOrderExt> apsOrderExts) {
-            this.save(apsOrderExts);
+        apsOrderExtDao.saveAll(apsOrderExts);
     }
 }

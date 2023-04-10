@@ -86,8 +86,13 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
      * 更新: scmXbDeliveryDao.queryPurchaseOrderAndExists()  委外
      */
     public void pullData_v2() {
+
         //统计完工数
-        //u9MoFinishService.countU9FinishQtyHandler();
+        long t1 = System.currentTimeMillis();
+        u9MoFinishService.countU9FinishQtyHandler();
+        long t2= System.currentTimeMillis();
+        LogUtil.bizLog("countU9FinishQtyHandler{}", t2 - t1);
+
         List<ApsOrder> orderList = new ArrayList<>();
         //U9料品
         List<U9Material> u9MaterialList = u9MaterialService.findByProductModelIsNotNull();
@@ -125,7 +130,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         getSelfService().save(orderList);
         long t9= System.currentTimeMillis();
         LogUtil.bizLog("持久化耗时{}", t9 - t8);
-        LogUtil.bizLog("总耗时{}", t9 - t3);
+        LogUtil.bizLog("总耗时{}", t9 - t1);
 
     }
 

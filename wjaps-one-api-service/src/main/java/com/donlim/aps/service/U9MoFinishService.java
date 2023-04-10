@@ -47,11 +47,8 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
      * 根据订单与日期维度U9完工数
      */
     public void countU9FinishQtyHandler() {
-        long t1 = System.currentTimeMillis();
-        List<ApsOrderExt> apsOrderExts = ountU9FinishQtyQuery();
-        apsOrderExtService.saveU9TotalHandler(apsOrderExts);
-        long t2= System.currentTimeMillis();
-        LogUtil.bizLog("sumU9FinishQty耗时{}", t2 - t1);
+        List<ApsOrderExt> apsOrderExts = countU9FinishQtyQuery();
+        apsOrderExtService.save(apsOrderExts);
     }
 
 
@@ -59,8 +56,8 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
      * 获取需要更新内排订单
      * @return
      */
-    public List<ApsOrderExt> ountU9FinishQtyQuery() {
-        List<Map<String,Object>>  u9FinishTotal = u9MoFinishDao.ountU9FinishQtyQuery();
+    public List<ApsOrderExt> countU9FinishQtyQuery() {
+        List<Map<String,Object>>  u9FinishTotal = u9MoFinishDao.countU9FinishQtyQuery();
         List<ApsOrderExt> u9FinishTotalDtos = new ArrayList<ApsOrderExt>(u9FinishTotal.size());
         //这里会有内存溢出、处理方法做分片
         List<List<Map<String, Object>>> partitionLists = Lists.partition(u9FinishTotal, partitionSize);

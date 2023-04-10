@@ -27,6 +27,6 @@ public interface U9MoFinishDao extends BaseEntityDao<U9MoFinish>  {
     @Query(value = "select sum(umf.finish_qty) as finishQty ,umf.order_no as orderNo ,aoe.id as id   from u9_mo_finish umf \n" +
             "left join aps_order_ext aoe on aoe.order_no  = umf.order_no  \n" +
             "group by umf.order_no \n" , nativeQuery = true)
-    List<Map<String,Object>> ountU9FinishQtyQuery();
+    List<Map<String,Object>> countU9FinishQtyQuery();
 
 }
