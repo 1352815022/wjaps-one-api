@@ -7,6 +7,7 @@ import com.donlim.aps.entity.cust.OrderAndScm;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -28,5 +29,12 @@ public interface U9MoFinishDao extends BaseEntityDao<U9MoFinish>  {
             "left join aps_order_ext aoe on aoe.order_no  = umf.order_no  \n" +
             "group by umf.order_no \n" , nativeQuery = true)
     List<Map<String,Object>> countU9FinishQtyQuery();
+
+    /**
+     * 取出完工单
+     * @param date
+     * @return
+     */
+    List<U9MoFinish>findByFinishDateBetween(LocalDate start,LocalDate end);
 
 }

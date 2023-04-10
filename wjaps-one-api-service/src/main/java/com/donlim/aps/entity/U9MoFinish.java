@@ -2,6 +2,7 @@ package com.donlim.aps.entity;
 
 import com.changhong.sei.core.entity.BaseAuditableEntity;
 import com.changhong.sei.core.entity.BaseEntity;
+import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -10,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -22,6 +25,7 @@ import java.util.Date;
 @Table(name = "u9_mo_finish")
 @DynamicInsert
 @DynamicUpdate
+@Data
 public class U9MoFinish extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -18921762760490670L;
 
@@ -35,36 +39,13 @@ public class U9MoFinish extends BaseEntity implements Serializable {
      * 已完成数量
      */
     @Column(name = "finish_qty")
-    private Double finishQty;
+    private BigDecimal finishQty;
     /**
      * 完工日期
      */
     @Column(name = "finish_date")
-    private Date finishDate;
+    private LocalDate finishDate;
 
 
-    public String getOrderNo() {
-        return orderNo;
-    }
-
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
-    }
-
-    public Double getFinishQty() {
-        return finishQty;
-    }
-
-    public void setFinishQty(Double finishQty) {
-        this.finishQty = finishQty;
-    }
-
-    public Date getFinishDate() {
-        return finishDate;
-    }
-
-    public void setFinishDate(Date finishDate) {
-        this.finishDate = finishDate;
-    }
 
 }

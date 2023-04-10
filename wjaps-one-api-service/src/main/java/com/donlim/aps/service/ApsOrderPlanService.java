@@ -51,6 +51,9 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
     private McasProcessDao mcasProcessDao;
     @Autowired
     private McasYieldDao mcasYieldDao;
+    @Autowired
+    private U9MoFinishDao u9MoFinishDao;
+
 
     @Override
     protected BaseEntityDao<ApsOrderPlan> getDao() {
@@ -646,7 +649,41 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
         }
         return details;
     }
+    /**
+     * 根据U9完工报告更新计划表
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public  void updatePlanFormU9(){
+        LocalDate date = LocalDate.now().plusDays(-1);
+        Map<String, BigDecimal> materialCodeYeildMap = new HashMap<>();
+        List<U9MoFinish> moFinishList = u9MoFinishDao.findByFinishDateBetween(date,LocalDate.now());
+        List<String> moList = moFinishList.stream().map(a -> a.getOrderNo()).collect(Collectors.toList());
+        List<ApsOrder> apsOrderList = apsOrderDao.findByOrderNoIn(moList).stream().collect(Collectors.toList());
+        for (ApsOrder apsOrder : apsOrderList) {
+            BigDecimal finishQty = moFinishList.stream().filter(a -> a.getOrderNo().equals(apsOrder.getOrderNo())).map(a -> a.getFinishQty()).reduce(BigDecimal.ZERO, BigDecimal::add);
+            if(materialCodeYeildMap.containsKey(apsOrder.getMaterialCode())){
+                materialCodeYeildMap.put(apsOrder.getMaterialCode(),finishQty.add(materialCodeYeildMap.get(apsOrder.getMaterialCode())));
+            }else{
+                materialCodeYeildMap.put(apsOrder.getMaterialCode(),finishQty);
+            }
 
+        }
+        //找出有排计划未生产部分赋值生产数为0
+        for (ApsOrderPlanDetail apsOrderPlanDetail : apsOrderPlanDetailDao.findAllByPlanDate(date)) {
+            if(materialCodeYeildMap.get(apsOrderPlanDetail.getApsOrderPlan().getMaterialCode())==null){
+                materialCodeYeildMap.put(apsOrderPlanDetail.getApsOrderPlan().getMaterialCode(),BigDecimal.ZERO);
+            }
+        }
+        List<String> planIds = new ArrayList<>();
+        List<ApsOrderPlanDetail> planDetailList = getPlan(materialCodeYeildMap, date, planIds);
+        //不用重排的订单
+        List<ApsOrderPlanDetail> keepDetails = new ArrayList<>();
+        List<ApsOrderPlan> byIdIn = dao.findByIdIn(planIds).stream().filter(a -> a.getStatus().name().equals("Normal")).collect(Collectors.toList());
+        for (ApsOrderPlan apsOrderPlan : byIdIn) {
+            keepDetails.addAll(apsOrderPlan.getOrderPlanDetails());
+        }
+        calcPlan(planDetailList, keepDetails);
+    }
     /**
      * 根据MCAS当天报工数据更新计划表
      */
@@ -654,9 +691,10 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
     public void updatePlanFromMcas() {
         //每天7点半计算昨天数据，因些日期要减-1
         LocalDate date = LocalDate.now().plusDays(-1);
+        Map<String, BigDecimal> materialCodeYeildMap = new HashMap<>();
         List<ApsProductionProcessSchedule> macsList = apsProductionProcessScheduleDao.findAllByProductionDateEquals(date);
         List<String> materialCodeList = macsList.stream().map(ApsProductionProcessSchedule::getMaterialCode).collect(Collectors.toList());
-        Map<String, BigDecimal> materialCodeYeildMap = new HashMap<>();
+
         List<U9Material> materialCodeInList = materialDao.findByCodeIn(materialCodeList);
         for (String materialCode : materialCodeList) {
             BigDecimal sumQty = BigDecimal.ZERO;

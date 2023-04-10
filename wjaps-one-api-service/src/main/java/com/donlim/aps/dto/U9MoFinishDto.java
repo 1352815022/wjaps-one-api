@@ -3,6 +3,7 @@ package com.donlim.aps.dto;
 import com.changhong.sei.core.dto.BaseEntityDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.util.Date;
 
@@ -13,6 +14,7 @@ import java.util.Date;
  * @since 2023-04-08 11:27:31
  */
 @ApiModel(description = "U9数据扩展字段DTO")
+@Data
 public class U9MoFinishDto extends BaseEntityDto {
     private static final long serialVersionUID = 729699186384623251L;
     /**
@@ -31,29 +33,12 @@ public class U9MoFinishDto extends BaseEntityDto {
     @ApiModelProperty(value = "完工日期")
     private Date finishDate;
 
+    /**
+     * 物料编码
+     */
+    private String materialCode;
 
-    public String getOrderNo() {
-        return orderNo;
-    }
 
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
-    }
 
-    public Double getFinishQty() {
-        return finishQty;
-    }
-
-    public void setFinishQty(Double finishQty) {
-        this.finishQty = finishQty;
-    }
-
-    public Date getFinishDate() {
-        return finishDate;
-    }
-
-    public void setFinishDate(Date finishDate) {
-        this.finishDate = finishDate;
-    }
 
 }
