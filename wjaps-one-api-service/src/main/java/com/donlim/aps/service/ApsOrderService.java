@@ -130,8 +130,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         long t8= System.currentTimeMillis();
         getSelfService().orderSaveAll(orderList);
         long t9= System.currentTimeMillis();
-        LogUtil.bizLog("持久化耗时{}", t9 - t8);
-        LogUtil.bizLog("总耗时{}", t9 - t1);
+        LogUtil.bizLog("orderSaveAll持久化耗时{}", t9 - t8);
+        LogUtil.bizLog("pullData_v2总耗时{}", t9 - t1);
 
     }
 
