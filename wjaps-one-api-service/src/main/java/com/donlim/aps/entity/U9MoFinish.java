@@ -10,21 +10,20 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.math.BigDecimal;
+import java.util.Date;
 
 /**
- * 订单表(内部)扩展表(ApsOrderExt)实体类
+ * U9数据扩展字段(U9MoFinish)实体类
  *
  * @author sei
- * @since 2023-04-06 08:29:17
+ * @since 2023-04-08 11:27:28
  */
 @Entity
-@Table(name = "aps_order_ext")
+@Table(name = "u9_mo_finish")
 @DynamicInsert
 @DynamicUpdate
-public class ApsOrderExt  extends BaseEntity implements Serializable {
-    private static final long serialVersionUID = -90042732745769862L;
-
+public class U9MoFinish extends BaseEntity implements Serializable {
+    private static final long serialVersionUID = -18921762760490670L;
 
 
     /**
@@ -36,7 +35,12 @@ public class ApsOrderExt  extends BaseEntity implements Serializable {
      * 已完成数量
      */
     @Column(name = "finish_qty")
-    private BigDecimal finishQty;
+    private Double finishQty;
+    /**
+     * 完工日期
+     */
+    @Column(name = "finish_date")
+    private Date finishDate;
 
 
     public String getOrderNo() {
@@ -47,12 +51,20 @@ public class ApsOrderExt  extends BaseEntity implements Serializable {
         this.orderNo = orderNo;
     }
 
-    public BigDecimal getFinishQty() {
+    public Double getFinishQty() {
         return finishQty;
     }
 
-    public void setFinishQty(BigDecimal finishQty) {
+    public void setFinishQty(Double finishQty) {
         this.finishQty = finishQty;
+    }
+
+    public Date getFinishDate() {
+        return finishDate;
+    }
+
+    public void setFinishDate(Date finishDate) {
+        this.finishDate = finishDate;
     }
 
 }

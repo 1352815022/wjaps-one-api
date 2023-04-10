@@ -60,6 +60,9 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     @Autowired
     private ApsOrderPlanDetailDao apsOrderPlanDetailDao;
 
+    @Autowired
+    private U9MoFinishService u9MoFinishService;
+
     @Override
     protected BaseEntityDao<ApsOrder> getDao() {
         return dao;
@@ -83,6 +86,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
      * 更新: scmXbDeliveryDao.queryPurchaseOrderAndExists()  委外
      */
     public void pullData_v2() {
+        //统计完工数
+        //u9MoFinishService.countU9FinishQtyHandler();
         List<ApsOrder> orderList = new ArrayList<>();
         //U9料品
         List<U9Material> u9MaterialList = u9MaterialService.findByProductModelIsNotNull();
