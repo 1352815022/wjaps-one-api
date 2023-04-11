@@ -41,8 +41,8 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
         return u9MoFinishDao;
     }
 
-    private final Integer partitionSize = 1000;
-    private final Integer partitionCountLimit = 5000;
+    private final Integer partitionSize = 100000;
+    private final Integer partitionCountLimit = 500;
     /**
      * 根据订单与日期维度U9完工数
      */
