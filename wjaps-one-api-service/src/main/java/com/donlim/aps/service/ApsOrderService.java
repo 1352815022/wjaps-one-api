@@ -73,8 +73,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         return SpringUtil.getBean(this.getClass());   //SpringUtil工具类见下面代码
     }
 
-    private final Integer partitionSize = 50000000;
-    private final Integer partitionCountLimit = 10000000;
+    private final Integer partitionSize = 500;
+    private final Integer partitionCountLimit = 1000;
     /**
      * 2.0
      * 新增:
