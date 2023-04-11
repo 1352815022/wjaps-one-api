@@ -106,7 +106,29 @@ public class U9ProduceOrder extends BaseAuditableEntity implements Serializable 
     private String tenantCode;
 
 
+    @Column(name="dept_code")
+    private String deptCode;
 
+
+
+    @Column(name = "line_code")
+    private String lineCode;
+
+    public String getDeptCode() {
+        return deptCode;
+    }
+
+    public void setDeptCode(String deptCode) {
+        this.deptCode = deptCode;
+    }
+
+    public String getLineCode() {
+        return lineCode;
+    }
+
+    public void setLineCode(String lineCode) {
+        this.lineCode = lineCode;
+    }
 
     public String getDocNo() {
         return docNo;
