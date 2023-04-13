@@ -241,7 +241,19 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             apsOrder.setStatus(OrderStatusType.NoRelease);
             apsOrder.setU9Status(U9OrderStatus.transformStatus(u9OrderCust.getU9ProduceOrder().getStatus()));
             apsOrder.setTotalCompleteQty(u9OrderCust.getU9ProduceOrder().getTotalCompleteQty());
-            String deptCode = u9OrderCust.getU9Material().getDeptCode();
+            Optional<ApsOrganize> dept = innerOrderParam.getApsOrganizes().stream().filter(a -> a.getCode().equals(u9OrderCust.getU9ProduceOrder().getDeptCode())).findFirst();
+            if (dept.isPresent()) {
+                ApsOrganize apsOrganize = dept.get();
+                apsOrder.setWorkGroupId(apsOrganize.getId());
+                apsOrder.setWorkGroupName(apsOrganize.getName());
+            }
+            Optional<ApsOrganize> line = innerOrderParam.getApsOrganizes().stream().filter(a -> a.getCode().equals(u9OrderCust.getU9ProduceOrder().getLineCode())).findFirst();
+            if (line.isPresent()) {
+                ApsOrganize apsOrganize = line.get();
+                apsOrder.setWorkLineId(apsOrganize.getId());
+                apsOrder.setWorkLineName(apsOrganize.getName());
+            }
+      /*      String deptCode = u9OrderCust.getU9Material().getDeptCode();
             if (StringUtils.isNotEmpty(deptCode)) {
                 Optional<ApsOrganize> first = apsOrganizes.stream().filter(e -> deptCode.equals(e.getCode())).findFirst();
                 if (first.isPresent()) {
@@ -250,7 +262,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
                     apsOrder.setWorkGroupName(apsOrganize.getName());
                 }
             }
-
+*/
             if (u9OrderCust.getApsOrderExt() != null) {
                 apsOrder.setFinishQty(u9OrderCust.getApsOrderExt().getFinishQty());
             }
@@ -315,7 +327,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
                 continue;
             }
             apsOrder.setProductModel(material.get().getProductModel());
-            String deptCode = material.get().getDeptCode();
+            //不再取料品的生产单位，取工单生产单位
+            /*String deptCode = material.get().getDeptCode();
             if (StringUtils.isNotEmpty(deptCode)) {
                 Optional<ApsOrganize> first = apsOrganizes.stream().filter(e -> deptCode.equals(e.getCode())).findFirst();
                 if (first.isPresent()) {
@@ -323,14 +336,28 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
                     apsOrder.setWorkGroupId(apsOrganize.getId());
                     apsOrder.setWorkGroupName(apsOrganize.getName());
                 }
-            }
+            }*/
             //U9ProduceOrder u9ProduceOrder = orderExist.getU9ProduceOrder();
+
             U9ProduceOrder u9ProduceOrder = orderExist.buildU9ProduceOrder(orderExist);
             if (u9ProduceOrder != null) {
                 apsOrder.setOweQty(NumberUtils.getBigDecimalValue(u9ProduceOrder.getQty()).subtract(
                         NumberUtils.getBigDecimalValue(u9ProduceOrder.getTotalCompleteQty())));
                 apsOrder.setU9Status(U9OrderStatus.transformStatus(orderExist.getU9ProduceOrder().getStatus()));
                 apsOrder.setProduceQty(u9ProduceOrder.getQty());
+                Optional<ApsOrganize> dept = innerOrderParam.getApsOrganizes().stream().filter(a -> a.getCode().equals(u9ProduceOrder.getDeptCode())).findFirst();
+                if (dept.isPresent()) {
+                    ApsOrganize apsOrganize = dept.get();
+                    apsOrder.setWorkGroupId(apsOrganize.getId());
+                    apsOrder.setWorkGroupName(apsOrganize.getName());
+                }
+                Optional<ApsOrganize> line = innerOrderParam.getApsOrganizes().stream().filter(a -> a.getCode().equals(u9ProduceOrder.getLineCode())).findFirst();
+                if (line.isPresent()) {
+                    ApsOrganize apsOrganize = line.get();
+                    apsOrder.setWorkLineId(apsOrganize.getId());
+                    apsOrder.setWorkLineName(apsOrganize.getName());
+                }
+
             }
             //ScmXbDelivery scmXbDelivery = orderExist.getScmXbDelivery();
             ScmXbDelivery scmXbDelivery = orderExist.buildScmXbDelivery(orderExist);
