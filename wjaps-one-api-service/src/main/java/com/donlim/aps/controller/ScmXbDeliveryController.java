@@ -71,9 +71,7 @@ public class ScmXbDeliveryController extends BaseEntityController<ScmXbDelivery,
             result.setRows(new ArrayList<>());
             return ResultData.success(result);
         }
-        List<ScmXbDeliveryDto> collect = rows.stream().map(e -> {
-            return modelMapper.map(e, ScmXbDeliveryDto.class);
-        }).collect(Collectors.toList());
+        List<ScmXbDeliveryDto> collect = rows.stream().map(e -> modelMapper.map(e, ScmXbDeliveryDto.class)).collect(Collectors.toList());
         result.setRows(collect);
         return ResultData.success(result);
 

@@ -314,10 +314,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     public List<ApsOrder>  innerOrderModifyHandler(CommomOrderParamDto innerOrderParam) {
         List<ApsOrder> orderList = new ArrayList<>();
         List<U9Material> u9MaterialList = innerOrderParam.getU9MaterialList();
-        List<ApsOrganize> apsOrganizes = innerOrderParam.getApsOrganizes();
-
+       // List<ApsOrganize> apsOrganizes = innerOrderParam.getApsOrganizes();
         List<OrderAndScmV2> orderExistDtos = getSelfService().queryInnerOrderAndExistsDto();
-
         for (OrderAndScmV2 orderExist : orderExistDtos) {
             //复制对象
             ApsOrder apsOrder = new ApsOrder();
@@ -327,18 +325,6 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
                 continue;
             }
             apsOrder.setProductModel(material.get().getProductModel());
-            //不再取料品的生产单位，取工单生产单位
-            /*String deptCode = material.get().getDeptCode();
-            if (StringUtils.isNotEmpty(deptCode)) {
-                Optional<ApsOrganize> first = apsOrganizes.stream().filter(e -> deptCode.equals(e.getCode())).findFirst();
-                if (first.isPresent()) {
-                    ApsOrganize apsOrganize = first.get();
-                    apsOrder.setWorkGroupId(apsOrganize.getId());
-                    apsOrder.setWorkGroupName(apsOrganize.getName());
-                }
-            }*/
-            //U9ProduceOrder u9ProduceOrder = orderExist.getU9ProduceOrder();
-
             U9ProduceOrder u9ProduceOrder = orderExist.buildU9ProduceOrder(orderExist);
             if (u9ProduceOrder != null) {
                 apsOrder.setOweQty(NumberUtils.getBigDecimalValue(u9ProduceOrder.getQty()).subtract(
@@ -583,7 +569,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         entity.setTotalPlanQty(entity.getTotalPlanQty().add(entity.getPlanQty()));
         entity.setNoPlanQty(entity.getProduceQty().subtract(entity.getTotalPlanQty()));
         if (entity.getTotalPlanQty().compareTo(entity.getProduceQty()) > 0) {
-            throw new IllegalArgumentException(ResultEnum.PLAN_QTY_ERROR.getMsg());
+           // throw new IllegalArgumentException(ResultEnum.PLAN_QTY_ERROR.getMsg());
         } else if (entity.getTotalPlanQty().compareTo(entity.getProduceQty()) == 0) {
             entity.setStatus(OrderStatusType.Released);
         } else if (entity.getTotalPlanQty().compareTo(BigDecimal.ZERO) > 0) {
