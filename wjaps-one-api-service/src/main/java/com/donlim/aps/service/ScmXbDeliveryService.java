@@ -317,7 +317,12 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
                                     Long materialId = Long.parseLong(materialIds.get(i));
                                     Optional<U9Bom> first = u9BomDao.findByMasterId(materialIds.get(i - 1)).stream().filter(a -> a.getMaterialId().equals(materialId)).findFirst();
                                     if (first.isPresent()) {
-                                        qty = first.get().getQty().multiply(qty);
+                                        try{
+                                            qty = first.get().getQty().multiply(qty);
+                                        }catch (Exception e){
+                                            LogUtil.bizLog(u9Purchase.getDocNo()+"Qty1"+ first.get().getQty()+"   Qty2"+qty);
+                                        }
+
                                     } else {
                                         LogUtil.bizLog("出错");
                                     }
