@@ -236,7 +236,6 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
     /**
      * 计算采购委外送货时间（有需求分类号）
      */
-    @Transactional(rollbackFor = Exception.class)
     public void calcPurchaseByNoOrderNo(LocalDate localDate) {
         //没有需求分类号的都自动排在单审核当天
         List<U9Purchase> u9PurchaseList = u9PurchaseDao.findByDemandCodeIsNullAndDeliveryDateAfter(localDate);
