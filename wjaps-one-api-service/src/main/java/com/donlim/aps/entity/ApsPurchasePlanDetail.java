@@ -25,10 +25,11 @@ public class ApsPurchasePlanDetail extends BaseAuditableEntity implements Serial
     /**
      * 排产id
      */
+
     @Column(name = "plan_id")
     private String planId;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = ApsPurchasePlan.class)
     @JoinColumn(name = "plan_id",insertable = false,updatable = false)
     private ApsPurchasePlan apsPurchasePlan;
     /**

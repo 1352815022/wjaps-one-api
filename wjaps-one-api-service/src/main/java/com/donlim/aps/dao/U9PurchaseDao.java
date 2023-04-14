@@ -4,6 +4,7 @@ import com.changhong.sei.core.dao.BaseEntityDao;
 import com.donlim.aps.entity.U9Purchase;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -18,5 +19,7 @@ public interface U9PurchaseDao extends BaseEntityDao<U9Purchase> {
     List<U9Purchase> findAllByDemandCodeAndMaterialCode(String orderNo, String materialCode);
 
     List<U9Purchase> findAllByDemandCode(String demandCode);
+
+    List<U9Purchase>findByDemandCodeIsNullAndDeliveryDateAfter(LocalDate date);
 
 }

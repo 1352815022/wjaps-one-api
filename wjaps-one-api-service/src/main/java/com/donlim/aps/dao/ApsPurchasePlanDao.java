@@ -19,7 +19,7 @@ public interface ApsPurchasePlanDao extends BaseEntityDao<ApsPurchasePlan> {
     int deleteByOrderIdIn(List<String>Ids);
     List<ApsPurchasePlan>findByOrderIdIn(List<String>Ids);
     int deleteByStartDateAfter(LocalDate date);
-    List<ApsPurchasePlan>findByStartDateAfter(LocalDate date);
+    List<ApsPurchasePlan>findByStartDateAfterAndSoNoIsNotNull(LocalDate date);
 
     /**
      * 根据订单号删除计划
@@ -30,5 +30,7 @@ public interface ApsPurchasePlanDao extends BaseEntityDao<ApsPurchasePlan> {
 
     List<ApsPurchasePlan>findByOrderNoIn(List<String>orderNos);
 
+
+    List<ApsPurchasePlan>findByRemarkIn(List<String>purchaseIds);
 
 }
