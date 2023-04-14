@@ -236,8 +236,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             if (apsOrder.getOweQty().compareTo(BigDecimal.ZERO) <= 0) {
                 continue;
             }
-            apsOrder.setProduceQty(apsOrder.getOweQty());
-            apsOrder.setNoPlanQty(apsOrder.getProduceQty());
+            apsOrder.setProduceQty(u9OrderCust.getU9ProduceOrder().getTotalCompleteQty());
+            apsOrder.setNoPlanQty(BigDecimal.ZERO);
             apsOrder.setStatus(OrderStatusType.NoRelease);
             apsOrder.setU9Status(U9OrderStatus.transformStatus(u9OrderCust.getU9ProduceOrder().getStatus()));
             apsOrder.setTotalCompleteQty(u9OrderCust.getU9ProduceOrder().getTotalCompleteQty());
@@ -330,7 +330,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
                 apsOrder.setOweQty(NumberUtils.getBigDecimalValue(u9ProduceOrder.getQty()).subtract(
                         NumberUtils.getBigDecimalValue(u9ProduceOrder.getTotalCompleteQty())));
                 apsOrder.setU9Status(U9OrderStatus.transformStatus(orderExist.getU9ProduceOrder().getStatus()));
-                apsOrder.setProduceQty(u9ProduceOrder.getQty());
+                apsOrder.setOrderQty(u9ProduceOrder.getQty());
+                apsOrder.setProduceQty(u9ProduceOrder.getTotalCompleteQty());
                 Optional<ApsOrganize> dept = innerOrderParam.getApsOrganizes().stream().filter(a -> a.getCode().equals(u9ProduceOrder.getDeptCode())).findFirst();
                 if (dept.isPresent()) {
                     ApsOrganize apsOrganize = dept.get();
