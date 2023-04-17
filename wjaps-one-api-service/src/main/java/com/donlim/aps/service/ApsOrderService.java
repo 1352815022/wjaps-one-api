@@ -17,6 +17,7 @@ import com.donlim.aps.dto.ApsOrderType;
 import com.donlim.aps.dto.OrderStatusType;
 import com.donlim.aps.dto.U9OrderStatus;
 import com.donlim.aps.dto.pull.CommomOrderParamDto;
+import com.donlim.aps.dto.pull.ModifyFinishQtyParamDto;
 import com.donlim.aps.entity.*;
 import com.donlim.aps.entity.cust.*;
 import com.donlim.aps.util.NumberUtils;
@@ -63,6 +64,9 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     @Autowired
     private U9MoFinishService u9MoFinishService;
 
+    @Autowired
+    private ApsOrderPlanService apsOrderPlanService;
+
     @Override
     protected BaseEntityDao<ApsOrder> getDao() {
         return dao;
@@ -70,6 +74,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
 
     //解决事务失效
     private ApsOrderService getSelfService(){
+
         return SpringUtil.getBean(this.getClass());   //SpringUtil工具类见下面代码
     }
 
@@ -110,7 +115,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         long t4 = System.currentTimeMillis();
         LogUtil.bizLog("innerOrderModifyHandler耗时{}", t4 - t3);
         //委外更新
-    //    List<ApsOrder> outerOrders = getSelfService().outerOrderModifyHandler();
+        //List<ApsOrder> outerOrders = getSelfService().outerOrderModifyHandler();
         long t5= System.currentTimeMillis();
         LogUtil.bizLog("outerOrderModifyHandler耗时{}", t5 - t4);
         //内排新增
@@ -118,19 +123,30 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         long t6= System.currentTimeMillis();
         LogUtil.bizLog("innerOrderAddHandle耗时{}", t6 - t5);
         //委外新增
-      //  List<ApsOrder> outerOrdersNew = getSelfService().outerOrderAddHandler(innerOrderParam);
+        //  List<ApsOrder> outerOrdersNew = getSelfService().outerOrderAddHandler(innerOrderParam);
         long t7= System.currentTimeMillis();
         LogUtil.bizLog("outerOrderAddHandler耗时{}", t7 - t6);
 
-      //  orderList.addAll(outerOrders);
+        //  orderList.addAll(outerOrders);
         orderList.addAll(innerOrders);
         orderList.addAll(innerOrdersNew);
-     //   orderList.addAll(outerOrdersNew);
+        //   orderList.addAll(outerOrdersNew);
         //分片持久化
         long t8= System.currentTimeMillis();
         getSelfService().orderSaveAll(orderList);
         long t9= System.currentTimeMillis();
         LogUtil.bizLog("orderSaveAll持久化耗时{}", t9 - t8);
+        //生产计划写入已完成数量
+        //List<ModifyFinishQtyParamDto> modifyFinishQtyParamDtos = orderList.stream().map(t -> {
+        //    return ModifyFinishQtyParamDto.builder()
+        //            .orderId(t.getId())
+        //            .qty(t.getFinishQty())
+        //            .build();
+        //}).collect(Collectors.toList());
+        //apsOrderPlanService.BatchModifyHasQtyByParam(modifyFinishQtyParamDtos);
+
+
+
         LogUtil.bizLog("pullData_v2总耗时{}", t9 - t1);
 
     }

@@ -1,5 +1,6 @@
 package com.donlim.aps.service;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.changhong.sei.core.dao.BaseEntityDao;
 import com.changhong.sei.core.dto.serach.PageResult;
 import com.changhong.sei.core.dto.serach.Search;
@@ -11,6 +12,7 @@ import com.donlim.aps.dao.*;
 import com.donlim.aps.dto.ApsOrderDto;
 import com.donlim.aps.dto.CalcByCapactityDto;
 import com.donlim.aps.dto.OrderStatusType;
+import com.donlim.aps.dto.pull.ModifyFinishQtyParamDto;
 import com.donlim.aps.entity.*;
 import com.donlim.aps.util.ReflectUtils;
 import org.springframework.beans.BeanUtils;
@@ -58,6 +60,12 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
     @Override
     protected BaseEntityDao<ApsOrderPlan> getDao() {
         return dao;
+    }
+
+    //解决事务失效
+    private ApsOrderPlanService getSelfService(){
+        Class<? extends ApsOrderPlanService> aClass = this.getClass();
+        return SpringUtil.getBean(aClass);   //SpringUtil工具类见下面代码
     }
 
     private static BigDecimal maxCapactity = new BigDecimal(999999);
@@ -233,6 +241,8 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
                 LocalDate planDate = detail.getPlanDate();
                 map.put(planDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), detail.getPlanQty());
             }
+            BigDecimal finishQty = plan.getOrder().getFinishQty();
+            map.put("hasQty",finishQty);
             map.remove("orderPlanDetails");
             colsRows.add(map);
         }
@@ -906,4 +916,24 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
     }
 
 
+    /**
+     * 批量修改完工数量
+     * @param modifyFinishQtyParamDtos
+     */
+    public void BatchModifyHasQtyByParam(List<ModifyFinishQtyParamDto> modifyFinishQtyParamDtos) {
+        //分片
+        List<String> modifyOrderNos = modifyFinishQtyParamDtos.stream().map(ModifyFinishQtyParamDto::getOrderId).collect(Collectors.toList());
+        //orderNo查询生产计划实体
+        List<ApsOrderPlan> ApsOrderPlans = dao.findByOrderIdIn(modifyOrderNos);
+        //批量更新
+        ApsOrderPlans.forEach(m->{
+            Optional<ModifyFinishQtyParamDto> findFirst = modifyFinishQtyParamDtos.stream().filter(i -> i.getOrderId().equals(m.getOrderId())).findFirst();
+            if (findFirst.isPresent()) {
+                m.setHasQty(findFirst.get().getQty());
+            }
+        });
+        this.save(ApsOrderPlans);
+
+
+    }
 }
