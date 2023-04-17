@@ -53,7 +53,7 @@ public class ScmXbDeliveryController extends BaseEntityController<ScmXbDelivery,
 
     @Override
     public ResultData updateOrderTask(Map<String, String> params) {
-        LogUtil.bizLog("后台任务由【{}】执行完成！", ContextUtil.getSessionUser());
+
         service.updateOrderTask();
         return ResultDataUtil.success("执行成功");
     }

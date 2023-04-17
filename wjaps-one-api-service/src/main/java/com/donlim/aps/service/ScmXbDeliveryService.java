@@ -82,6 +82,8 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
      */
     @Transactional(rollbackFor = Exception.class)
     public void updateOrderTask() {
+        LogUtil.bizLog("更新SCM送货订单信息开始");
+        long t1 = System.currentTimeMillis();
         try {
             // 自产SCM
             LocalDate now = LocalDate.now();
@@ -128,6 +130,8 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
         } catch (Exception e) {
             LogUtil.bizLog("生成采购计划失败", e);
         }
+        long t2 = System.currentTimeMillis();
+        LogUtil.bizLog("更新SCM送货订单信息结束耗时{}",t2-t1);
     }
 
     public PageResult<OrderChangeCountVO> queryOrderChangeCount(Search search) {
