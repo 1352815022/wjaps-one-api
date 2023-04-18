@@ -114,7 +114,6 @@ public class ScmConnector {
                     scmXbDeliveryPlan.setQty(scmData.getDeliveryQty());
                     scmXbDeliveryPlan.setPurchaseOrder(scmData.getPurchaseOrder());
                     scmXbDeliveryPlan.setMaterialCode(scmData.getItemCode());
-
                     scmXbDeliveryPlan.setPoLineId(scmData.getPOLineID());
                     list.add(scmXbDeliveryPlan);
                 }
