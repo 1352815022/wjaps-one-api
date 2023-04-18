@@ -164,10 +164,15 @@ public class ApsOrder extends BaseAuditableEntity implements Serializable {
     @Column(name = "order_qty")
     private BigDecimal orderQty;
     /**
-     * 欠发数
+     * 欠入库数
      */
     @Column(name = "owe_qty")
     private BigDecimal oweQty;
+    /**
+     * SCM欠数
+     */
+    @Column(name = "scm_owe_qty")
+    private BigDecimal scmOweQty;
     /**
      * 车间id
      */
