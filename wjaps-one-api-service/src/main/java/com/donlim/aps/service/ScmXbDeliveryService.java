@@ -112,6 +112,7 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
                     if (old.getDeliveryEndDate().isAfter(newScmXbDelivery.getDeliveryEndDate()) || old.getDeliveryEndDate().isBefore(newScmXbDelivery.getDeliveryEndDate())) {
                         old.setDeliveryEndDate(newScmXbDelivery.getDeliveryEndDate());
                     }
+                    old.setOweQty(newScmXbDelivery.getOweQty());
                 } else {
                     oldList.add(newScmXbDelivery);
                 }
