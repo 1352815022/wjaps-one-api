@@ -77,7 +77,8 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
             "    d.delivery_start_date as deliveryStartDate , " +
             "    d.delivery_end_date  as deliveryEndDate, " +
             "    d.product_model  as scmXbProductModel, " +
-            "    e.finish_qty  as finishQty " +
+            "    e.finish_qty  as finishQty, " +
+            "    d.owe_qty as scmOweQty "+
             "from " +
             "    aps_order i  " +
             "inner join " +
@@ -91,7 +92,7 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
             "    aps_order_ext e " +
             "        on i.order_no = e.order_no " +
             "where " +
-            "    i.type= 'INNER' and DATE_SUB(CURDATE(), INTERVAL 30 DAY)<=o.created_date   " , nativeQuery = true)
+            "    i.type= 'INNER' and DATE_SUB(CURDATE(), INTERVAL 30 DAY)<=o.created_date " , nativeQuery = true)
     List<Map<String,Object>> queryInnerOrderAndExists_v2();
 
 
