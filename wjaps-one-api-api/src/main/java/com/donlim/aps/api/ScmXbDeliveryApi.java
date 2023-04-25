@@ -31,7 +31,7 @@ public interface ScmXbDeliveryApi extends BaseEntityApi<ScmXbDeliveryDto> , Find
      * @return
      */
     @PostMapping(path = "updateOrderTask", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "定时更新订单变更", notes = "定时更新订单变更")
+    @ApiOperation(value = "定时更新订单变更并生成委外计划", notes = "定时更新订单变更并生成委外计划")
     ResultData updateOrderTask(@RequestBody Map<String, String> params);
 
 

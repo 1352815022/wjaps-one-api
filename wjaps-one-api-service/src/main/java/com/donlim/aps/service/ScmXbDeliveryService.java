@@ -1,5 +1,6 @@
 package com.donlim.aps.service;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.changhong.sei.core.context.ContextUtil;
 import com.changhong.sei.core.dao.BaseEntityDao;
 import com.changhong.sei.core.dto.serach.PageResult;
@@ -29,6 +30,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,6 +51,8 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
     private ScmXbDeliveryPlanDao scmXbDeliveryPlanDao;
     @Autowired
     private ApsPurchasePlanService apsPurchasePlanService;
+    @Autowired
+    private ApsPurchasePlanDetailService apsPurchasePlanDetailService;
     @Autowired
     private U9MaterialDao u9MaterialDao;
     @Autowired
@@ -78,6 +82,8 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
      */
     @Transactional(rollbackFor = Exception.class)
     public void updateOrderTask() {
+        LogUtil.bizLog("更新SCM送货订单信息开始");
+        long t1 = System.currentTimeMillis();
         try {
             // 自产SCM
             LocalDate now = LocalDate.now();
@@ -106,6 +112,7 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
                     if (old.getDeliveryEndDate().isAfter(newScmXbDelivery.getDeliveryEndDate()) || old.getDeliveryEndDate().isBefore(newScmXbDelivery.getDeliveryEndDate())) {
                         old.setDeliveryEndDate(newScmXbDelivery.getDeliveryEndDate());
                     }
+                    old.setOweQty(newScmXbDelivery.getOweQty());
                 } else {
                     oldList.add(newScmXbDelivery);
                 }
@@ -116,13 +123,16 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
             scmXbDeliveryPlanService.updateDeliveryDetail(CompanyEnum.WJ1_SCM, LocalDate.now(), parentIds);
             //生成采购委外计划
             LogUtil.bizLog("开始生成采购计划");
-            calcPurchaseDeliveryDate(now);
+            calcPurchaseDeliveryDate(now);//有需求分类号
+            calcPurchaseByNoOrderNo(now);
             LogUtil.bizLog("结束生成采购计划");
             //下载APS计划
             // oneApsPlanDataService.updateOneApsData(LocalDate.now());
         } catch (Exception e) {
             LogUtil.bizLog("生成采购计划失败", e);
         }
+        long t2 = System.currentTimeMillis();
+        LogUtil.bizLog("更新SCM送货订单信息结束耗时{}",t2-t1);
     }
 
     public PageResult<OrderChangeCountVO> queryOrderChangeCount(Search search) {
@@ -229,7 +239,47 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
     }
 
     /**
-     * 计算采购委外送货时间
+     * 计算采购委外送货时间（有需求分类号）
+     */
+    public void calcPurchaseByNoOrderNo(LocalDate localDate) {
+        //没有需求分类号的都自动排在单审核当天
+        List<U9Purchase> u9PurchaseList = u9PurchaseDao.findByDemandCodeIsNullAndDeliveryDateAfter(localDate);
+        List<String> u9PurchaseIds = u9PurchaseList.stream().map(a -> a.getId()).collect(Collectors.toList());
+        List<String> existPurchasePlan = apsPurchasePlanService.findByPurchaseIn(u9PurchaseIds).stream().map(a -> a.getRemark()).collect(Collectors.toList());
+        //List<ApsPurchasePlan>apsPurchasePlanList=new ArrayList<>();
+        for (U9Purchase u9Purchase : u9PurchaseList) {
+            if(existPurchasePlan.stream().filter(a->a.equals(u9Purchase.getId())).count()==0) {
+                ApsPurchasePlan apsPurchasePlan = new ApsPurchasePlan();
+                apsPurchasePlan.setOrderNo(u9Purchase.getDocNo());
+                apsPurchasePlan.setSumArrivalQty(u9Purchase.getReceiveQty());
+                apsPurchasePlan.setPlanQty(u9Purchase.getReqQty());
+                apsPurchasePlan.setDeliveryStartDate(u9Purchase.getDeliveryDate());
+                apsPurchasePlan.setDeliveryEndDate(u9Purchase.getDeliveryDate());
+                apsPurchasePlan.setStartDate(u9Purchase.getDeliveryDate());
+                apsPurchasePlan.setEndDate(u9Purchase.getDeliveryDate());
+                apsPurchasePlan.setSupplierName(u9Purchase.getSupplierName());
+                apsPurchasePlan.setRemark(u9Purchase.getId());
+                Optional<U9Material> u9MaterialDaoByCode = u9MaterialDao.findByCode(u9Purchase.getMaterialCode());
+                if (u9MaterialDaoByCode.isPresent()) {
+                    apsPurchasePlan.setMaterialCode(u9Purchase.getMaterialCode());
+                    apsPurchasePlan.setMaterialId(u9Purchase.getMaterialId());
+                    apsPurchasePlan.setMaterialName(u9Purchase.getMaterialName());
+                    apsPurchasePlan.setMaterialSpec(u9MaterialDaoByCode.get().getSpec());
+                    apsPurchasePlan.setProductModel(u9MaterialDaoByCode.get().getProductModel());
+                    apsPurchasePlanService.save(apsPurchasePlan);
+                    ApsPurchasePlanDetail apsPurchasePlanDetail = new ApsPurchasePlanDetail();
+                    apsPurchasePlanDetail.setPlanQty(apsPurchasePlan.getPlanQty());
+                    apsPurchasePlanDetail.setPlanDate(apsPurchasePlan.getDeliveryStartDate());
+                    apsPurchasePlanDetail.setPlanId(apsPurchasePlan.getId());
+                    apsPurchasePlanDetailService.save(apsPurchasePlanDetail);
+                }
+            }
+
+        }
+    }
+
+    /**
+     * 计算采购委外送货时间（有需求分类号）
      */
     public void calcPurchaseDeliveryDate(LocalDate localDate) {
         List<ScmXbDelivery> scmDate = dao.findByDeliveryStartDateAfter(localDate);
@@ -272,7 +322,12 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
                                     Long materialId = Long.parseLong(materialIds.get(i));
                                     Optional<U9Bom> first = u9BomDao.findByMasterId(materialIds.get(i - 1)).stream().filter(a -> a.getMaterialId().equals(materialId)).findFirst();
                                     if (first.isPresent()) {
-                                        qty = first.get().getQty().multiply(qty);
+                                        try{
+                                            qty = first.get().getQty().multiply(qty);
+                                        }catch (Exception e){
+                                            LogUtil.bizLog(u9Purchase.getDocNo()+"Qty1"+ first.get().getQty()+"   Qty2"+qty);
+                                        }
+
                                     } else {
                                         LogUtil.bizLog("出错");
                                     }
@@ -291,16 +346,11 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
                         }
                     }
                 }
-
         }
         if (calcBomDtoList.size() > 0) {
            apsPurchasePlanService.calcPurchasePlan(calcBomDtoList, localDate);
         }
-
-
     }
-
-
     /**
      * 获取某日开始后的需求分类号
      *

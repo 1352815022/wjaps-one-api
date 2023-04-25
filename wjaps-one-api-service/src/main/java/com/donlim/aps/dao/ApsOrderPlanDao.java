@@ -42,7 +42,12 @@ public interface ApsOrderPlanDao extends BaseEntityDao<ApsOrderPlan> {
 
     List<ApsOrderPlan>findAllByStatus(OrderStatusType status);
 
-
+    /**
+     * 根据内排单id查询
+     * @param orderIds
+     * @return
+     */
+    List<ApsOrderPlan> findByOrderIdIn(List<String> orderIds);
 
 
 }

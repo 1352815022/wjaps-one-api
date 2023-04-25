@@ -47,6 +47,7 @@ public class ApsPurchasePlanService extends BaseEntityService<ApsPurchasePlan> {
 
     @Autowired
     private U9MaterialDao u9MaterialDao;
+
     @Override
     protected BaseEntityDao<ApsPurchasePlan> getDao() {
         return dao;
@@ -215,17 +216,17 @@ public class ApsPurchasePlanService extends BaseEntityService<ApsPurchasePlan> {
     @Transactional(rollbackFor = Exception.class)
     public void calcPurchasePlan(List<CalcBomDto> calcBomDtoList, LocalDate localDate) {
         //先删除数据
-        List<String> planIds = dao.findByStartDateAfter(localDate).stream().map(a -> a.getId()).collect(Collectors.toList());
+        List<String> planIds = dao.findByStartDateAfterAndSoNoIsNotNull(localDate).stream().map(a -> a.getId()).collect(Collectors.toList());
         //找出涉及到的采购单号
         List<String> orderNos = calcBomDtoList.stream().map(a -> a.getDocNo()).collect(Collectors.toList());
         List<String> orderNoPlanIds = dao.findByOrderNoIn(orderNos).stream().map(a -> a.getId()).collect(Collectors.toList());
         planIds.addAll(orderNoPlanIds);
         apsPurchasePlanDetailDao.deleteByPlanIdIn(planIds);
         dao.delete(planIds);
-        List<ApsPurchasePlanDetail>apsPurchasePlanDetails=new ArrayList<>();
-        Map<String, List<CalcBomDto>> groupByDocNo = calcBomDtoList.stream().collect(groupingBy(a->a.getDocNo()+a.getMaterialCode()));
+        List<ApsPurchasePlanDetail> apsPurchasePlanDetails = new ArrayList<>();
+        Map<String, List<CalcBomDto>> groupByDocNo = calcBomDtoList.stream().collect(groupingBy(a -> a.getDocNo() + a.getMaterialCode()));
         groupByDocNo.forEach((docNo, details) -> {
-            ApsPurchasePlan apsPurchasePlan=new ApsPurchasePlan();
+            ApsPurchasePlan apsPurchasePlan = new ApsPurchasePlan();
             LocalDate startDate = details.stream().min(Comparator.comparing(CalcBomDto::getPlanDate)).get().getPlanDate();
             LocalDate endDate = details.stream().max(Comparator.comparing(CalcBomDto::getPlanDate)).get().getPlanDate();
             apsPurchasePlan.setStartDate(startDate);
@@ -249,9 +250,9 @@ public class ApsPurchasePlanService extends BaseEntityService<ApsPurchasePlan> {
 
             OperateResultWithData<ApsPurchasePlan> save = save(apsPurchasePlan);
 
-            if(save.successful()){
+            if (save.successful()) {
                 for (CalcBomDto detail : details) {
-                    ApsPurchasePlanDetail apsPurchasePlanDetail=new ApsPurchasePlanDetail();
+                    ApsPurchasePlanDetail apsPurchasePlanDetail = new ApsPurchasePlanDetail();
                     apsPurchasePlanDetail.setPlanQty(detail.getQty());
                     apsPurchasePlanDetail.setPlanDate(detail.getPlanDate());
                     apsPurchasePlanDetail.setPlanId(save.getData().getId());
@@ -294,6 +295,16 @@ public class ApsPurchasePlanService extends BaseEntityService<ApsPurchasePlan> {
         map.put("status", row.getStatus());
 
         return map;
+
+    }
+
+    /**
+     * 获取不存在的订单
+     * @param purchaseIds
+     * @return
+     */
+    public List<ApsPurchasePlan> findByPurchaseIn(List<String> purchaseIds) {
+        return dao.findByRemarkIn(purchaseIds);
 
     }
 

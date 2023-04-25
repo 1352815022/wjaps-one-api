@@ -52,7 +52,7 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
             "inner join u9_material m on m.id = p.material_id " +
             "left join scm_xb_delivery d  on d.order_no = p.so_id and d.material_code  = m.code  and d.type = '1'" +
             "left join aps_order_ext e  on d.order_no = e.order_no " +
-            "where not exists (select 1 from aps_order i where i.order_no = p.doc_no )", nativeQuery = true)
+            "where DATE_SUB(CURDATE(), INTERVAL 30 DAY)<=p.created_date and not exists (select 1 from aps_order i where i.order_no = p.doc_no )", nativeQuery = true)
     List<U9OrderCust> queryInnerOrderAndNotExists_2();
 
 
@@ -77,10 +77,11 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
             "    d.delivery_start_date as deliveryStartDate , " +
             "    d.delivery_end_date  as deliveryEndDate, " +
             "    d.product_model  as scmXbProductModel, " +
-            "    e.finish_qty  as finishQty " +
+            "    e.finish_qty  as finishQty, " +
+            "    d.owe_qty as scmOweQty "+
             "from " +
             "    aps_order i  " +
-            "left join " +
+            "inner join " +
             "    u9_produce_order o  " +
             "        on i.order_no = o.doc_no  " +
             "left join " +
@@ -91,7 +92,7 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
             "    aps_order_ext e " +
             "        on i.order_no = e.order_no " +
             "where " +
-            "    i.type= 'INNER'   " , nativeQuery = true)
+            "    i.type= 'INNER' and DATE_SUB(CURDATE(), INTERVAL 30 DAY)<=o.created_date " , nativeQuery = true)
     List<Map<String,Object>> queryInnerOrderAndExists_v2();
 
 

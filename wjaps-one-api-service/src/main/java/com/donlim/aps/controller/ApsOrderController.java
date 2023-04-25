@@ -74,12 +74,6 @@ public class ApsOrderController extends BaseEntityController<ApsOrder, ApsOrderD
     }
 
 
-    @PostMapping(path = "finishQtyHandler" , consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResultData<String> finishQtyHandler() {
-        //统计完工数
-        u9MoFinishService.countU9FinishQtyHandler();
-        return ResultDataUtil.success("执行成功");
-    }
     /**
      * 修改内排单据状态，同时修改排产单状态
      * @param dtos

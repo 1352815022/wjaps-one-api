@@ -200,6 +200,11 @@ public class ApsOrderDto extends BaseEntityDto {
     @ApiModelProperty(value = "欠入库数")
     private BigDecimal oweQty;
     /**
+     * SCM欠数
+     */
+    @ApiModelProperty(value = "SCM欠数")
+    private BigDecimal scmOweQty;
+    /**
      * 生产计划批次号
      */
     @ApiModelProperty(value = "生产计划批次号")

@@ -1,6 +1,7 @@
 package com.donlim.aps.entity;
 
 import com.changhong.sei.core.entity.BaseAuditableEntity;
+import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -9,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -21,6 +23,7 @@ import java.util.Date;
 @Table(name = "u9_purchase")
 @DynamicInsert
 @DynamicUpdate
+@Data
 public class U9Purchase extends BaseAuditableEntity implements Serializable {
     private static final long serialVersionUID = -81644150618532675L;
     /**
@@ -62,7 +65,7 @@ public class U9Purchase extends BaseAuditableEntity implements Serializable {
      * 送货时间
      */
     @Column(name = "delivery_date")
-    private Date deliveryDate;
+    private LocalDate deliveryDate;
     /**
      * 组织id
      */
@@ -83,100 +86,6 @@ public class U9Purchase extends BaseAuditableEntity implements Serializable {
     private String tenantCode;
 
 
-    public String getDocNo() {
-        return docNo;
-    }
 
-    public void setDocNo(String docNo) {
-        this.docNo = docNo;
-    }
-
-    public Long getMaterialId() {
-        return materialId;
-    }
-
-    public void setMaterialId(Long materialId) {
-        this.materialId = materialId;
-    }
-
-    public String getMaterialName() {
-        return materialName;
-    }
-
-    public void setMaterialName(String materialName) {
-        this.materialName = materialName;
-    }
-
-    public String getMaterialCode() {
-        return materialCode;
-    }
-
-    public void setMaterialCode(String materialCode) {
-        this.materialCode = materialCode;
-    }
-
-    public BigDecimal getReqQty() {
-        return reqQty;
-    }
-
-    public void setReqQty(BigDecimal reqQty) {
-        this.reqQty = reqQty;
-    }
-
-    public BigDecimal getReceiveQty() {
-        return receiveQty;
-    }
-
-    public void setReceiveQty(BigDecimal receiveQty) {
-        this.receiveQty = receiveQty;
-    }
-
-    public String getSupplierName() {
-        return supplierName;
-    }
-
-    public void setSupplierName(String supplierName) {
-        this.supplierName = supplierName;
-    }
-
-    public Date getDeliveryDate() {
-        return deliveryDate;
-    }
-
-    public void setDeliveryDate(Date deliveryDate) {
-        this.deliveryDate = deliveryDate;
-    }
-
-    public Long getOrgId() {
-        return orgId;
-    }
-
-    public void setOrgId(Long orgId) {
-        this.orgId = orgId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDemandCode() {
-        return demandCode;
-    }
-
-    public void setDemandCode(String demandCode) {
-        this.demandCode = demandCode;
-    }
-
-    public String getTenantCode() {
-        return tenantCode;
-    }
-
-    public void setTenantCode(String tenantCode) {
-        this.tenantCode = tenantCode;
-    }
 
 }

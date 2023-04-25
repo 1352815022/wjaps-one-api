@@ -35,13 +35,14 @@ public class ScmConnector {
      * @throws Exception
      */
     public static List<ScmXbDelivery> getDeliveryData(String supplier, LocalDate date) throws Exception {
+        LocalDate searchDate=date.plusDays(-15);
         svcHdr.setSOURCEID("WJAPS");
         svcHdr.setDESTINATIONID("SCM");
         svcHdr.setTYPE("SELECT");
         svcHdr.setNO("489-02");
         svcHdr.setIPADDRESS("192.168.117.8");
         svcHdr.setBO("");
-        svcHdr.setBodyJson("{supplier:\""+supplier+"\",begDate:\"" + DateUtils.LocalDateToString(date) + "\"}");
+        svcHdr.setBodyJson("{supplier:\""+supplier+"\",begDate:\"" + DateUtils.LocalDateToString(searchDate) + "\"}");
         List<ScmXbDelivery> list = new ArrayList<>();
         long beginTime = System.currentTimeMillis();
         SvcHdrsTypes svcHdrsTypes  =sync.donlimSCMQUERYSYNC(svcHdr);
@@ -92,13 +93,14 @@ public class ScmConnector {
      * @throws Exception
      */
     public static List<ScmXbDeliveryPlan> getDeliveryDetailData(String supplier, LocalDate date) throws Exception {
+        LocalDate searchDate=date.plusDays(-15);
         svcHdr.setSOURCEID("WJAPS");
         svcHdr.setDESTINATIONID("SCM");
         svcHdr.setTYPE("SELECT");
         svcHdr.setNO("489-04");
         svcHdr.setIPADDRESS("192.168.117.8");
         svcHdr.setBO("");
-        svcHdr.setBodyJson("{supplier:\""+supplier+"\",begDate:\"" + DateUtils.LocalDateToString(date)  + "\"}");
+        svcHdr.setBodyJson("{supplier:\""+supplier+"\",begDate:\"" + DateUtils.LocalDateToString(searchDate)  + "\"}");
         List<ScmXbDeliveryPlan> list = new ArrayList<>();
         long beginTime = System.currentTimeMillis();
         SvcHdrsTypes svcHdrsTypes  =sync.donlimSCMQUERYSYNC(svcHdr);
@@ -112,7 +114,6 @@ public class ScmConnector {
                     scmXbDeliveryPlan.setQty(scmData.getDeliveryQty());
                     scmXbDeliveryPlan.setPurchaseOrder(scmData.getPurchaseOrder());
                     scmXbDeliveryPlan.setMaterialCode(scmData.getItemCode());
-
                     scmXbDeliveryPlan.setPoLineId(scmData.getPOLineID());
                     list.add(scmXbDeliveryPlan);
                 }

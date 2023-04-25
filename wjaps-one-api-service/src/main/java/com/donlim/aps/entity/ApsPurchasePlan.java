@@ -172,7 +172,7 @@ public class ApsPurchasePlan extends BaseAuditableEntity implements Serializable
     private String tenantCode;
 
     @OneToMany(targetEntity = ApsPurchasePlanDetail.class)
-    @JoinColumn(name = "plan_id",insertable = false,updatable = false)
+    @JoinColumn(name = "plan_id")
     private List<ApsPurchasePlanDetail> purchasePlanDetails;
 
 }
