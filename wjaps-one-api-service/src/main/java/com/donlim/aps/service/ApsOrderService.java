@@ -251,7 +251,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             apsOrder.setOrderDate(DateUtils.date2LocalDate(u9OrderCust.getU9ProduceOrder().getCreatedDate()));
             apsOrder.setType(ApsOrderType.INNER);
             apsOrder.setProduceQty(u9OrderCust.getU9ProduceOrder().getTotalCompleteQty());
-            apsOrder.setNoPlanQty(BigDecimal.ZERO);
+            //未排数初始化等于已排数
+            apsOrder.setNoPlanQty(NumberUtils.getBigDecimalValue(u9OrderCust.getU9ProduceOrder().getQty()));
             apsOrder.setStatus(OrderStatusType.NoRelease);
             apsOrder.setU9Status(U9OrderStatus.transformStatus(u9OrderCust.getU9ProduceOrder().getStatus()));
             apsOrder.setTotalCompleteQty(u9OrderCust.getU9ProduceOrder().getTotalCompleteQty());
