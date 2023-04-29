@@ -414,13 +414,13 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             return super.preUpdate(entity);
         }
         entity.setTotalPlanQty(entity.getTotalPlanQty().add(entity.getPlanQty()));
-        entity.setNoPlanQty(entity.getProduceQty().subtract(entity.getTotalPlanQty()));
+      //entity.setNoPlanQty(entity.getProduceQty().subtract(entity.getTotalPlanQty()));
         if (entity.getTotalPlanQty().compareTo(entity.getProduceQty()) > 0) {
            // throw new IllegalArgumentException(ResultEnum.PLAN_QTY_ERROR.getMsg());
         } else if (entity.getTotalPlanQty().compareTo(entity.getProduceQty()) == 0) {
-            entity.setStatus(OrderStatusType.Released);
+           // entity.setStatus(OrderStatusType.Released);
         } else if (entity.getTotalPlanQty().compareTo(BigDecimal.ZERO) > 0) {
-            entity.setStatus(OrderStatusType.Release_Part);
+           // entity.setStatus(OrderStatusType.Release_Part);
         }
         entity.setPlanQty(BigDecimal.ZERO);
         return super.preUpdate(entity);
