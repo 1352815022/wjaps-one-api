@@ -398,33 +398,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
 
 
 
-    /**
-     * 完成/暂停不变更数量
-     * 更新前校验
-     * 总排产数不能大于生产数
-     * 已排数量 = 已排数量 + 排产数量
-     * 未排数量 = 生产数量 - 已排数量
-     *
-     * @param entity
-     * @return OperateResultWithData<ApsOrder>
-     */
-    @Override
-    protected OperateResultWithData<ApsOrder> preUpdate(ApsOrder entity) {
-        if (OrderStatusType.Completed.equals(entity.getStatus()) || OrderStatusType.Stop.equals(entity.getStatus())) {
-            return super.preUpdate(entity);
-        }
-        entity.setTotalPlanQty(entity.getTotalPlanQty().add(entity.getPlanQty()));
-      //entity.setNoPlanQty(entity.getProduceQty().subtract(entity.getTotalPlanQty()));
-        if (entity.getTotalPlanQty().compareTo(entity.getProduceQty()) > 0) {
-           // throw new IllegalArgumentException(ResultEnum.PLAN_QTY_ERROR.getMsg());
-        } else if (entity.getTotalPlanQty().compareTo(entity.getProduceQty()) == 0) {
-           // entity.setStatus(OrderStatusType.Released);
-        } else if (entity.getTotalPlanQty().compareTo(BigDecimal.ZERO) > 0) {
-           // entity.setStatus(OrderStatusType.Release_Part);
-        }
-        entity.setPlanQty(BigDecimal.ZERO);
-        return super.preUpdate(entity);
-    }
+
 
     /**
      * 恢复订单状态
