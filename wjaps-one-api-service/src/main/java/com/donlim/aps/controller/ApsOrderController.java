@@ -140,6 +140,7 @@ public class ApsOrderController extends BaseEntityController<ApsOrder, ApsOrderD
         if(!service.IsCanPlan(dto)){
             return ResultData.fail(dto.getOrderNo()+"在"+dto.getPlanStartDate()+"已经有计划，请重新选择日期！");
         }
+        entity.setStatus(OrderStatusType.Released);
         OperateResultWithData<ApsOrder> orderInnerSave = service.save(entity);
         if (orderInnerSave.getSuccess()){
           planService.orderPlan(dto);
