@@ -439,7 +439,31 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     }
 
 
+    /**
+     * 更新预排订单信息
+     *
+     * @param apsOrderDto
+     */
+    public void updateOrder(ApsOrderDto apsOrderDto) {
+        if(apsOrderDto.getNoPlanQty().subtract(apsOrderDto.getPlanQty()).compareTo(BigDecimal.ZERO)==0){
+            apsOrderDto.setStatus(OrderStatusType.Released);
+            apsOrderDto.setNoPlanQty(BigDecimal.ZERO);
+        }else if(apsOrderDto.getNoPlanQty().subtract(apsOrderDto.getPlanQty()).compareTo(BigDecimal.ZERO)>0){
+            apsOrderDto.setStatus(OrderStatusType.Release_Part);
+            apsOrderDto.setNoPlanQty(apsOrderDto.getNoPlanQty().subtract(apsOrderDto.getPlanQty()));
+        }
+        Optional<ApsOrder> daoById = dao.findById(apsOrderDto.getId());
+        if (daoById.isPresent()) {
+            ApsOrder apsOrder = daoById.get();
+            apsOrder.setPlanStartDate(apsOrderDto.getPlanStartDate());
+            apsOrder.setPlanFinishDate(apsOrderDto.getPlanFinishDate());
+            apsOrder.setStatus(apsOrderDto.getStatus());
+            apsOrder.setNoPlanQty(apsOrderDto.getNoPlanQty());
+            apsOrder.setTotalPlanQty(apsOrder.getTotalPlanQty().add(apsOrderDto.getPlanQty()));
+            dao.save(apsOrder);
+        }
 
+    }
 
     /**
      * 更新订单生产计划开始和结束时间

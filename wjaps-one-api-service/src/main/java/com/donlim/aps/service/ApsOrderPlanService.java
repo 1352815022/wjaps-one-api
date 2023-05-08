@@ -372,7 +372,10 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
             detail.setPlanId(apsOrderPlan.getId());
         }
         apsOrderPlanDetailDao.save(details);
-        apsOrderService.updateOrderStartDateAndEndDate(apsOrderPlan);
+
+        //下达数量=订单数，已下达
+
+        apsOrderService.updateOrder(apsOrderDto);
         return apsOrderPlan.getId();
     }
 
