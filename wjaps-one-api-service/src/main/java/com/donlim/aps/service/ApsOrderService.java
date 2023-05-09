@@ -532,7 +532,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             BigDecimal rate=new BigDecimal((double)planNumByMonth/finishNumByMonth*100).setScale(2,BigDecimal.ROUND_HALF_UP);
             prodSchedRateByMonth= rate.toString()+"%";
         }
-        monthPlanRate.setTitle("周排产率");
+        monthPlanRate.setTitle("月排产率");
         monthPlanRate.setLinkedUrl("aa");
         monthPlanRate.setValue(prodSchedRateByMonth);
         gridList.add(dayPlan);
