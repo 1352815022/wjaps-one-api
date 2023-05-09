@@ -2,10 +2,7 @@ package com.donlim.aps.dto.pull;
 
 import com.donlim.aps.entity.ApsOrganize;
 import com.donlim.aps.entity.U9Material;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
@@ -21,6 +18,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class ModifyFinishQtyParamDto {
     /**
      * 产品型号

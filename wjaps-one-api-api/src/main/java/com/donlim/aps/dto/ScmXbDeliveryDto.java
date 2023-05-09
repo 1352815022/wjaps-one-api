@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
  * @since 2022-05-18 08:12:55
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 @ApiModel(description = "scm送货需求DTO")
 public class ScmXbDeliveryDto extends BaseEntityDto {
     private static final long serialVersionUID = -89845970427420273L;

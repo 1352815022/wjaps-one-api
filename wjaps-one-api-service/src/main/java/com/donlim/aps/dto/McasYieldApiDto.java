@@ -2,6 +2,7 @@ package com.donlim.aps.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -15,6 +16,7 @@ import java.util.List;
  */
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class McasYieldApiDto {
 
     /**
@@ -27,6 +29,7 @@ public class McasYieldApiDto {
      */
     @NoArgsConstructor
     @Data
+    @EqualsAndHashCode(callSuper=false)
     public static class TableDTO {
         /**
          * mcasID

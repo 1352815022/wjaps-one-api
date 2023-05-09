@@ -1,6 +1,7 @@
 package com.donlim.aps.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
  * @Date: 2022/10/10.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class MaterialRequireDto {
     /**
      * 料号

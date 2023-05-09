@@ -4,10 +4,7 @@ import com.donlim.aps.entity.ApsOrganize;
 import com.donlim.aps.entity.U9Material;
 import com.donlim.aps.entity.cust.U9OrderCust;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
@@ -19,6 +16,7 @@ import java.util.List;
  * @Date: 2023/4/04.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 @Accessors(chain = true)
 @Builder
 @AllArgsConstructor

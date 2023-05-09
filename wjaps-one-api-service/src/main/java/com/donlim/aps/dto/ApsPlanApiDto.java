@@ -2,6 +2,7 @@ package com.donlim.aps.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @NoArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ApsPlanApiDto {
     /**
      * table
@@ -25,6 +27,7 @@ public class ApsPlanApiDto {
      */
     @NoArgsConstructor
     @Data
+    @EqualsAndHashCode(callSuper=false)
     public static class TableDTO {
         /**
          * manualSchedulingID

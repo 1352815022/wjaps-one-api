@@ -2,6 +2,7 @@ package com.donlim.aps.dto;
 
 import com.donlim.aps.entity.U9Purchase;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
  * @Date: 2022/10/24.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class CalcBomDto {
     private U9Purchase u9Purchase;
     private String docNo;

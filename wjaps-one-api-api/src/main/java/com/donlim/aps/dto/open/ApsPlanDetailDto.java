@@ -1,6 +1,7 @@
 package com.donlim.aps.dto.open;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
  * @Date: 2022/10/11.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ApsPlanDetailDto {
 
         private BigDecimal planQty;

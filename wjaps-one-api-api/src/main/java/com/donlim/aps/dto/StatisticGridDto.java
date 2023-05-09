@@ -1,6 +1,7 @@
 package com.donlim.aps.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @Description:网络控件（看板）
@@ -8,6 +9,7 @@ import lombok.Data;
  * @Date: 2023/5/9.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class StatisticGridDto {
     /**
      * 标题
@@ -29,4 +31,6 @@ public class StatisticGridDto {
      * 数值
      */
     private String value;
+
+    private Integer precision;
 }

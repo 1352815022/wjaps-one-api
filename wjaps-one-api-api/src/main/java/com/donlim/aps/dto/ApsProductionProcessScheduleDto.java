@@ -4,6 +4,7 @@ import com.changhong.sei.core.dto.BaseEntityDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
@@ -15,6 +16,7 @@ import java.time.LocalDate;
  * @since 2022-06-20 11:34:57
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 @ApiModel(description = "生产工序报工表DTO")
 public class ApsProductionProcessScheduleDto extends BaseEntityDto {
     private static final long serialVersionUID = -94137082702753306L;

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
  * @Date: 2022/8/31.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class InnerOrderExcelDto implements Serializable {
 
     private static final long serialVersionUID = -3847170103657627725L;

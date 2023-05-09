@@ -4,6 +4,7 @@ import com.changhong.sei.core.dto.BaseEntityDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ import java.util.Date;
  */
 @ApiModel(description = "U9数据扩展字段DTO")
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class U9MoFinishDto extends BaseEntityDto {
     private static final long serialVersionUID = 729699186384623251L;
     /**

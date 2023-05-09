@@ -4,6 +4,7 @@ import com.changhong.sei.core.dto.BaseEntityDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
  */
 @ApiModel(description = "订单齐套DTO")
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ApsOrderDetailCompleteDto extends BaseEntityDto {
     private static final long serialVersionUID = 485555502081957857L;
 

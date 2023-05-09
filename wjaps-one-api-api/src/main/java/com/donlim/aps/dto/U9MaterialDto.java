@@ -4,6 +4,7 @@ import com.changhong.sei.core.dto.BaseEntityDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
  * @since 2022-05-13 11:12:00
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 @ApiModel(description = "料品表DTO")
 public class U9MaterialDto extends BaseEntityDto {
     private static final long serialVersionUID = -69254118145589000L;

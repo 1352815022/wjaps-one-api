@@ -7,6 +7,7 @@ import com.donlim.aps.dto.U9OrderStatus;
 import com.donlim.aps.util.EnumJsonRemarkSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -26,6 +27,7 @@ import java.time.LocalDate;
 @DynamicInsert
 @DynamicUpdate
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ApsOrder extends BaseAuditableEntity implements Serializable {
     private static final long serialVersionUID = 868441185468762785L;
 

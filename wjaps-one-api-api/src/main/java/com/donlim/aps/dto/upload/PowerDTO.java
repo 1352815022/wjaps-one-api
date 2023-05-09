@@ -1,6 +1,7 @@
 package com.donlim.aps.dto.upload;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
  * @Date 2022/7/16 9:40
  **/
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class PowerDTO {
 
     /**

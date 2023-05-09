@@ -1,6 +1,7 @@
 package com.donlim.aps.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
  * @Date: 2022/10/12.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ScmXbDeliveryQueryDto {
     private String orderNo;
     /**

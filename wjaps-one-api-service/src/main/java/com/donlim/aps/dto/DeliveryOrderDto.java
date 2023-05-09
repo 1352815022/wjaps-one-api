@@ -1,6 +1,7 @@
 package com.donlim.aps.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigInteger;
 
@@ -10,6 +11,7 @@ import java.math.BigInteger;
  * @Date: 2022/7/13.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class DeliveryOrderDto {
 
     private BigInteger num;

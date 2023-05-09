@@ -3,6 +3,7 @@ package com.donlim.aps.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @Date: 2023/5/8.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 @ApiModel(description = "订单统计")
 public class OrderStatisticsDto implements Serializable {
 
