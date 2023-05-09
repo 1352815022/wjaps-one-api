@@ -475,7 +475,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         //当天完工数
         Integer finishNumByDay = u9MoFinishDao.countByFinishDateBetween(dayStart, dayEnd.plusDays(1));
         dayPlan.setTitle("当天完工数");
-        dayPlan.setIconType("arrow-up");
+        dayPlan.setColor("red");
         dayPlan.setValue(finishNumByDay.toString());
 
         //当天排产数
