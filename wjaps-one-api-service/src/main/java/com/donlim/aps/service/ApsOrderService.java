@@ -12,10 +12,7 @@ import com.changhong.sei.core.service.bo.OperateResultWithData;
 import com.changhong.sei.serial.sdk.SerialService;
 import com.changhong.sei.util.DateUtils;
 import com.donlim.aps.dao.*;
-import com.donlim.aps.dto.ApsOrderDto;
-import com.donlim.aps.dto.ApsOrderType;
-import com.donlim.aps.dto.OrderStatusType;
-import com.donlim.aps.dto.U9OrderStatus;
+import com.donlim.aps.dto.*;
 import com.donlim.aps.dto.pull.CommomOrderParamDto;
 import com.donlim.aps.dto.pull.ModifyFinishQtyParamDto;
 import com.donlim.aps.entity.*;
@@ -31,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -65,8 +63,9 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     private U9MoFinishService u9MoFinishService;
 
     @Autowired
-    private ApsOrderPlanService apsOrderPlanService;
-
+    private ApsOrderPlanDao apsOrderPlanDao;
+    @Autowired
+    private U9MoFinishDao u9MoFinishDao;
     @Override
     protected BaseEntityDao<ApsOrder> getDao() {
         return dao;
@@ -395,24 +394,6 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     }
 
 
-
-
-
-
-
-    /**
-     * 恢复订单状态
-     *
-     * @param entity
-     */
-    public void recoverOrder(ApsOrder entity) {
-
-        entity.setNoPlanQty(entity.getOweQty());
-        entity.setTotalPlanQty(BigDecimal.ZERO);
-        this.save(entity);
-    }
-
-
     /**
      * 更新预排订单信息
      *
@@ -470,5 +451,85 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             return true;
         }
         return flag;
+    }
+
+    /**
+     *统计
+     * @return
+     */
+    public List<StatisticGridDto> findOrderStatistics(){
+        List<StatisticGridDto>gridList=new ArrayList<>();
+        StatisticGridDto dayPlan=new StatisticGridDto();
+        StatisticGridDto dayFinish=new StatisticGridDto();
+        StatisticGridDto dayPlanRate=new StatisticGridDto();
+        StatisticGridDto weekPlan=new StatisticGridDto();
+        StatisticGridDto weekFinish=new StatisticGridDto();
+        StatisticGridDto weekPlanRate=new StatisticGridDto();
+        StatisticGridDto monthPlan=new StatisticGridDto();
+        StatisticGridDto monthFinish=new StatisticGridDto();
+        StatisticGridDto monthPlanRate=new StatisticGridDto();
+        //日统计
+        LocalDate dayStart=LocalDate.now();
+        LocalDate dayEnd=LocalDate.now();
+
+        //当天完工数
+        Integer finishNumByDay = u9MoFinishDao.countByFinishDateBetween(dayStart, dayEnd.plusDays(1));
+        dayPlan.setTitle("当天完工数");
+        dayPlan.setValue(finishNumByDay.toString());
+
+        //当天排产数
+        Integer planNumByDay = apsOrderPlanDao.countPlanByDate(dayStart, dayEnd);
+        dayFinish.setTitle("当天排产数");
+        dayFinish.setValue(planNumByDay.toString());
+        String  prodSchedRateByDay="0%";
+        if(finishNumByDay>0){
+            BigDecimal rate=new BigDecimal((double) planNumByDay/finishNumByDay*100).setScale(2,BigDecimal.ROUND_HALF_UP);
+            prodSchedRateByDay= rate.toString()+"%";
+        }
+        dayPlanRate.setTitle("当天排产率");
+        dayPlanRate.setValue(prodSchedRateByDay);
+        //周统计
+        LocalDate weekStart=LocalDate.now().plusDays(-7);
+        LocalDate weekEnd=LocalDate.now();
+        Integer finishNumByWeek = u9MoFinishDao.countByFinishDateBetween(weekStart, weekEnd.plusDays(1));
+        weekFinish.setTitle("周完工数");
+        weekFinish.setValue(finishNumByWeek.toString());
+        Integer planNumByWeek = apsOrderPlanDao.countPlanByDate(dayStart, dayEnd);
+        weekPlan.setTitle("周排产数");
+        weekPlan.setValue(planNumByWeek.toString());
+        String  prodSchedRateByWeek="0%";
+        if(finishNumByWeek>0) {
+            BigDecimal rate=new BigDecimal((double)planNumByWeek/finishNumByWeek*100).setScale(2,BigDecimal.ROUND_HALF_UP);
+            prodSchedRateByWeek= rate.toString()+"%";
+        }
+        weekPlanRate.setTitle("周排产率");
+        weekPlanRate.setValue(prodSchedRateByWeek);
+        //月统计
+        LocalDate monthStart=LocalDate.now().plusDays(-30);
+        LocalDate monthEnd=LocalDate.now();
+        Integer finishNumByMonth = u9MoFinishDao.countByFinishDateBetween(monthStart, monthEnd.plusDays(1));
+        monthFinish.setTitle("月完工数");
+        monthFinish.setValue(finishNumByMonth.toString());
+
+        Integer planNumByMonth = apsOrderPlanDao.countPlanByDate(dayStart, dayEnd);
+        monthPlan.setTitle("月排产数");
+        monthPlan.setValue(planNumByMonth.toString());
+        String  prodSchedRateByMonth="0%";
+        if(finishNumByMonth>0) {
+            BigDecimal rate=new BigDecimal((double)planNumByMonth/finishNumByMonth*100).setScale(2,BigDecimal.ROUND_HALF_UP);
+            prodSchedRateByMonth= rate.toString()+"%";
+        }
+        monthPlanRate.setTitle("周排产率");
+        monthPlanRate.setValue(prodSchedRateByMonth);
+        gridList.add(dayPlan);
+        gridList.add(dayFinish);
+        gridList.add(dayPlanRate);
+        gridList.add(weekPlan);
+        gridList.add(weekFinish);
+        gridList.add(weekPlanRate);
+        gridList.add(monthPlan);
+        gridList.add(monthFinish);
+        gridList.add(monthPlanRate);
+        return gridList;
     }
 }

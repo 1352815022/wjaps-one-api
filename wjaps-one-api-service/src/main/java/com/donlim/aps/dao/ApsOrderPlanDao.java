@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -39,6 +40,16 @@ public interface ApsOrderPlanDao extends BaseEntityDao<ApsOrderPlan> {
      */
     @Query(value="select a from ApsOrderPlan a inner join ApsOrder b on a.orderId=b.id  where b.orderNo in (:orderList)")
     List<ApsOrderPlan>findByOrderNo(@Param("orderList") List<String> orderList);
+
+    /**
+     * 获取当天时间内的计划数
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    @Query(value="select count(*)  from aps_order_plan a inner join aps_order_plan_detail b on a.id =b.plan_id where b.plan_date >= ?1 and b.plan_date<=?2"
+            ,nativeQuery = true)
+    Integer countPlanByDate(LocalDate startDate,LocalDate endDate);
 
     List<ApsOrderPlan>findAllByStatus(OrderStatusType status);
 

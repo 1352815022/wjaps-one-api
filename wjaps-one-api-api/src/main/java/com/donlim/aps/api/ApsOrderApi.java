@@ -95,4 +95,14 @@ public interface ApsOrderApi extends BaseEntityApi<ApsOrderDto> , FindByPageApi<
     @PostMapping(path = "initApsOrderData",consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "生成APS工单" ,notes = "生成APS工单")
     ResultData<String> initApsOrder();
+
+
+    /**
+     * 控制台
+     * @return
+     */
+    @PostMapping(path = "findOrderStatistic",consumes = MediaType.APPLICATION_JSON_VALUE )
+    @ApiOperation(value = "控制台",notes = "控制台")
+    ResultData<List<StatisticGridDto>> findOrderStatistic();
+
 }

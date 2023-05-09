@@ -73,6 +73,12 @@ public class ApsOrderController extends BaseEntityController<ApsOrder, ApsOrderD
         return ResultDataUtil.success("执行成功");
     }
 
+    @Override
+    public ResultData<List<StatisticGridDto>> findOrderStatistic() {
+        List<StatisticGridDto> list = service.findOrderStatistics();
+        return ResultData.success(list);
+    }
+
 
     /**
      * 修改内排单据状态，同时修改排产单状态
