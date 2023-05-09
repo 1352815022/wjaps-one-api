@@ -501,7 +501,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         weekFinish.setPrecision(0);
         weekFinish.setValue(finishNumByWeek.toString());
         weekFinish.setLinkedUrl("aa");
-        Integer planNumByWeek = apsOrderPlanDao.countPlanByDate(dayStart, dayEnd);
+        Integer planNumByWeek = apsOrderPlanDao.countPlanByDate(weekStart, dayEnd);
         weekPlan.setTitle("周排产数");
         weekPlan.setValue(planNumByWeek.toString());
         weekPlan.setLinkedUrl("aa");
@@ -522,7 +522,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         monthFinish.setValue(finishNumByMonth.toString());
         monthFinish.setLinkedUrl("aa");
         monthFinish.setPrecision(0);
-        Integer planNumByMonth = apsOrderPlanDao.countPlanByDate(dayStart, dayEnd);
+        Integer planNumByMonth = apsOrderPlanDao.countPlanByDate(monthStart, dayEnd);
         monthPlan.setTitle("月排产数");
         monthPlan.setValue(planNumByMonth.toString());
         monthPlan.setLinkedUrl("aa");
@@ -535,7 +535,6 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         monthPlanRate.setTitle("周排产率");
         monthPlanRate.setLinkedUrl("aa");
         monthPlanRate.setValue(prodSchedRateByMonth);
-
         gridList.add(dayPlan);
         gridList.add(dayFinish);
         gridList.add(dayPlanRate);
