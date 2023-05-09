@@ -8,6 +8,7 @@ import com.donlim.aps.dto.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -101,7 +102,7 @@ public interface ApsOrderApi extends BaseEntityApi<ApsOrderDto> , FindByPageApi<
      * 控制台
      * @return
      */
-    @PostMapping(path = "findOrderStatistic",consumes = MediaType.APPLICATION_JSON_VALUE )
+    @GetMapping(path = "findOrderStatistic", consumes = MediaType.APPLICATION_JSON_VALUE )
     @ApiOperation(value = "控制台",notes = "控制台")
     ResultData<List<StatisticGridDto>> findOrderStatistic();
 
