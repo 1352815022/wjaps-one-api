@@ -476,14 +476,14 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         Integer finishNumByDay = u9MoFinishDao.countByFinishDateBetween(dayStart, dayEnd.plusDays(1));
         dayFinish.setTitle("当天完工数");
         //dayFinish.setColor("red");
-        dayFinish.setLinkedUrl("aa");
+        dayFinish.setLinkedUrl("/");
         dayFinish.setPrecision(0);
         dayFinish.setValue(finishNumByDay.toString());
         //当天排产数
         Integer planNumByDay = apsOrderPlanDao.countPlanByDate(dayStart, dayEnd);
         dayPlan.setTitle("当天排产数");
         dayPlan.setValue(planNumByDay.toString());
-        dayPlan.setLinkedUrl("aa");
+        dayPlan.setLinkedUrl("/");
         dayPlan.setPrecision(0);
         String  prodSchedRateByDay="0%";
         if(finishNumByDay>0){
@@ -492,7 +492,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         }
         dayPlanRate.setTitle("当天排产率");
         dayPlanRate.setValue(prodSchedRateByDay);
-        dayPlanRate.setLinkedUrl("aa");
+        dayPlanRate.setLinkedUrl("/");
         //周统计
         LocalDate weekStart=LocalDate.now().plusDays(-7);
         LocalDate weekEnd=LocalDate.now();
@@ -500,11 +500,11 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         weekFinish.setTitle("周完工数");
         weekFinish.setPrecision(0);
         weekFinish.setValue(finishNumByWeek.toString());
-        weekFinish.setLinkedUrl("aa");
+        weekFinish.setLinkedUrl("/");
         Integer planNumByWeek = apsOrderPlanDao.countPlanByDate(weekStart, dayEnd);
         weekPlan.setTitle("周排产数");
         weekPlan.setValue(planNumByWeek.toString());
-        weekPlan.setLinkedUrl("aa");
+        weekPlan.setLinkedUrl("/");
         weekPlan.setPrecision(0);
         String  prodSchedRateByWeek="0%";
         if(finishNumByWeek>0) {
@@ -513,19 +513,19 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         }
         weekPlanRate.setTitle("周排产率");
         weekPlanRate.setValue(prodSchedRateByWeek);
-        weekPlanRate.setLinkedUrl("aa");
+        weekPlanRate.setLinkedUrl("/");
         //月统计
         LocalDate monthStart=LocalDate.now().plusDays(-30);
         LocalDate monthEnd=LocalDate.now();
         Integer finishNumByMonth = u9MoFinishDao.countByFinishDateBetween(monthStart, monthEnd.plusDays(1));
         monthFinish.setTitle("月完工数");
         monthFinish.setValue(finishNumByMonth.toString());
-        monthFinish.setLinkedUrl("aa");
+        monthFinish.setLinkedUrl("/");
         monthFinish.setPrecision(0);
         Integer planNumByMonth = apsOrderPlanDao.countPlanByDate(monthStart, dayEnd);
         monthPlan.setTitle("月排产数");
         monthPlan.setValue(planNumByMonth.toString());
-        monthPlan.setLinkedUrl("aa");
+        monthPlan.setLinkedUrl("/");
         monthPlan.setPrecision(0);
         String  prodSchedRateByMonth="0%";
         if(finishNumByMonth>0) {
@@ -533,7 +533,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             prodSchedRateByMonth= rate.toString()+"%";
         }
         monthPlanRate.setTitle("月排产率");
-        monthPlanRate.setLinkedUrl("aa");
+        monthPlanRate.setLinkedUrl("/");
         monthPlanRate.setValue(prodSchedRateByMonth);
         gridList.add(dayPlan);
         gridList.add(dayFinish);
