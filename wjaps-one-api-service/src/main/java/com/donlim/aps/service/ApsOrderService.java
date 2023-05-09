@@ -506,6 +506,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         weekPlan.setTitle("周排产数");
         weekPlan.setValue(planNumByWeek.toString());
         weekPlan.setLinkedUrl("aa");
+        weekPlan.setPrecision(0);
         String  prodSchedRateByWeek="0%";
         if(finishNumByWeek>0) {
             BigDecimal rate=new BigDecimal((double)planNumByWeek/finishNumByWeek*100).setScale(2,BigDecimal.ROUND_HALF_UP);
