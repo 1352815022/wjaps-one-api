@@ -22,7 +22,7 @@ public class StatisticGridDto {
      */
     private String linkedUrl;
     /**
-     * 图标
+     * 图标类别
      */
     private String iconType;
     /**
