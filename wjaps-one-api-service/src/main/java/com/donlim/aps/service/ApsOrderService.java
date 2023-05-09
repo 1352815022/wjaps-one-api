@@ -477,13 +477,16 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         dayPlan.setTitle("当天完工数");
         dayPlan.setColor("red");
         dayPlan.setLinkedUrl("aa");
+        dayPlan.setPrecision(0);
         dayPlan.setValue(finishNumByDay.toString());
+
 
         //当天排产数
         Integer planNumByDay = apsOrderPlanDao.countPlanByDate(dayStart, dayEnd);
         dayFinish.setTitle("当天排产数");
         dayFinish.setValue(planNumByDay.toString());
         dayFinish.setLinkedUrl("aa");
+        dayFinish.setPrecision(0);
         String  prodSchedRateByDay="0%";
         if(finishNumByDay>0){
             BigDecimal rate=new BigDecimal((double) planNumByDay/finishNumByDay*100).setScale(2,BigDecimal.ROUND_HALF_UP);
