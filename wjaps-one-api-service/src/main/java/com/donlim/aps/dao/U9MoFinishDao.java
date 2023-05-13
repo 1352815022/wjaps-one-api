@@ -38,6 +38,6 @@ public interface U9MoFinishDao extends BaseEntityDao<U9MoFinish>  {
     List<U9MoFinish>findByFinishDateBetween(LocalDate start,LocalDate end);
 
 
-    Integer countByFinishDateBetween(LocalDate start,LocalDate end);
+    //Integer countByFinishDateBetween(LocalDate start,LocalDate end);
 
 }

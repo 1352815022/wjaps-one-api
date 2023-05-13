@@ -517,7 +517,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             BigDecimal rate=new BigDecimal((double)finishNumByWeek/planNumByWeek.size()*100).setScale(2,BigDecimal.ROUND_HALF_UP);
             prodSchedRateByWeek= rate.toString()+"%";
         }
-        weekPlanRate.setTitle("周排产率");
+        weekPlanRate.setTitle("周达产率");
         weekPlanRate.setValue(prodSchedRateByWeek);
         weekPlanRate.setLinkedUrl("/");
         //月统计

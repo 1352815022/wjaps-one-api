@@ -47,9 +47,9 @@ public interface ApsOrderPlanDao extends BaseEntityDao<ApsOrderPlan> {
      * @param endDate
      * @return
      */
-    @Query(value="select count(*)  from aps_order_plan a inner join aps_order_plan_detail b on a.id =b.plan_id where b.plan_date >= ?1 and b.plan_date<=?2"
+    @Query(value="select a.*  from aps_order_plan a inner join aps_order_plan_detail b on a.id =b.plan_id where b.plan_date >= ?1 and b.plan_date<=?2"
             ,nativeQuery = true)
-    Integer countPlanByDate(LocalDate startDate,LocalDate endDate);
+    List<ApsOrderPlan> findPlanByDate(LocalDate startDate,LocalDate endDate);
 
     List<ApsOrderPlan>findAllByStatus(OrderStatusType status);
 
