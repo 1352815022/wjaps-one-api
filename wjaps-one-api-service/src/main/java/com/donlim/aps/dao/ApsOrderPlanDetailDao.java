@@ -33,7 +33,7 @@ public interface ApsOrderPlanDetailDao extends BaseEntityDao<ApsOrderPlanDetail>
     List<ApsOrderPlanDetail> findAllByPlanDate(LocalDate date);
 
     @Query("select b from ApsOrderPlan a inner join ApsOrderPlanDetail b on a.id = b.planId " +
-            " where a.status='Normal' and b.planDate>=:start and b.planDate<=:end")
+            " where a.status='Normal' and b.planQty>0 and b.planDate>=:start and b.planDate<=:end")
     List<ApsOrderPlanDetail> findAllByPlanDate(LocalDate start,LocalDate end);
     /**
      * 根据日期范围获取内排单id

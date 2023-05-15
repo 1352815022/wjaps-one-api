@@ -11,10 +11,12 @@ import java.math.BigDecimal;
  * @Date: 2022/10/11.
  */
 @Data
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public class ApsPlanDetailDto {
 
-        private BigDecimal planQty;
-        private String materialCode;
+    private BigDecimal planQty;
+    private String docNo;
+    private String workGroup;
+    private String line;
 
 }

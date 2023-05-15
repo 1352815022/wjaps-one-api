@@ -7,6 +7,7 @@ import com.donlim.aps.dto.open.ApsPlanDetailDto;
 import com.donlim.aps.dto.open.ApsPlanDto;
 import com.donlim.aps.entity.ApsOrderPlanDetail;
 import io.swagger.annotations.Api;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,20 +36,17 @@ public class ApsOpenController implements ApsOpenApi {
     @Override
     public ResultData<ApsPlanDto> getPlanByDate(String date) {
         //取7天内的排产数量
-        LocalDate start = LocalDate.parse(date , DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        LocalDate end =start.plusDays(6);
+        LocalDate localDate = LocalDate.parse(date , DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         ApsPlanDto apsPlanDto=new ApsPlanDto();
-        List<ApsOrderPlanDetail> allByPlanDate = apsOrderPlanDetailDao.findAllByPlanDate(start,end)
+        List<ApsOrderPlanDetail> allByPlanDate = apsOrderPlanDetailDao.findAllByPlanDate(localDate,localDate)
                 .stream().filter(a->a.getApsOrderPlan().getStatus().name().equals("Normal")).collect(Collectors.toList());
-        List<String> materialList = allByPlanDate.stream().map(a -> a.getApsOrderPlan().getMaterialCode()).distinct().collect(Collectors.toList());
-        List<String> orderList = allByPlanDate.stream().map(a -> a.getApsOrderPlan().getOrder().getOrderNo()).distinct().collect(Collectors.toList());
-        apsPlanDto.setOrderList(orderList);
         List<ApsPlanDetailDto> detailList=new ArrayList<>();
-        for (String material : materialList) {
-            BigDecimal qty = allByPlanDate.stream().filter(a -> a.getApsOrderPlan().getMaterialCode().equals(material)).map(ApsOrderPlanDetail::getPlanQty).reduce(BigDecimal.ZERO, BigDecimal::add);
+        for (ApsOrderPlanDetail plan : allByPlanDate) {
             ApsPlanDetailDto detail=new ApsPlanDetailDto();
-            detail.setMaterialCode(material);
-            detail.setPlanQty(qty);
+            detail.setPlanQty(plan.getPlanQty());
+            detail.setDocNo(plan.getApsOrderPlan().getOrder().getOrderNo());
+            detail.setWorkGroup(plan.getApsOrderPlan().getWorkGroupName());
+            detail.setLine(plan.getApsOrderPlan().getLineName());
             detailList.add(detail);
         }
         apsPlanDto.setApsPlanDetailDtoList(detailList);

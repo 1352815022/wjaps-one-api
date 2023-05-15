@@ -13,8 +13,6 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ApsPlanDto {
-    //private String docNo;
-    private List<String>orderList;
 
     private List<ApsPlanDetailDto> apsPlanDetailDtoList;
 }
