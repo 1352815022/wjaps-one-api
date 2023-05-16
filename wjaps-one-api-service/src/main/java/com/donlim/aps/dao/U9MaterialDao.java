@@ -20,6 +20,7 @@ public interface U9MaterialDao extends BaseEntityDao<U9Material> {
 
     Optional<U9Material>findByCode(String code);
     List<U9Material>findByProductModelIsNotNull();
+    List<U9Material>findByCalcIsFalse();
 
 
 }

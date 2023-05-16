@@ -125,6 +125,11 @@ public class U9Material extends BaseAuditableEntity implements Serializable , IF
     private Boolean frozen;
 
     /**
+     * 是否计算
+     */
+    @Column(name = "calc")
+    private Boolean calc;
+    /**
      * 租户代码
      */
     @Column(name = "tenant_code")

@@ -46,4 +46,14 @@ public interface U9MaterialApi extends BaseEntityApi<U9MaterialDto> , FindByPage
     @PostMapping(path = "uploadPower")
     @ApiOperation(value = "导入清洗/喷粉配置",notes = "导入清洗/喷粉配置")
     ResultData<String> uploadPower(@RequestBody List<PowerDTO> list) throws IOException;
+
+    /**
+     * 导入计算
+     * @param list
+     * @return
+     * @throws IOException
+     */
+    @PostMapping(path = "uploadMaterialType")
+    @ApiOperation(value = "导入清洗/喷粉配置",notes = "导入清洗/喷粉配置")
+    ResultData<String> uploadMaterialType(@RequestBody List<U9MaterialDto> list) throws IOException;
 }

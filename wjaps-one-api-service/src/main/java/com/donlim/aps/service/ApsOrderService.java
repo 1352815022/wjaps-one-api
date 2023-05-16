@@ -66,19 +66,23 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     private ApsOrderPlanDao apsOrderPlanDao;
     @Autowired
     private U9MoFinishDao u9MoFinishDao;
+    @Autowired
+    private U9MaterialDao u9MaterialDao;
+
     @Override
     protected BaseEntityDao<ApsOrder> getDao() {
         return dao;
     }
 
     //解决事务失效
-    private ApsOrderService getSelfService(){
+    private ApsOrderService getSelfService() {
 
         return SpringUtil.getBean(this.getClass());   //SpringUtil工具类见下面代码
     }
 
     private final Integer partitionSize = 500;
     private final Integer partitionCountLimit = 1000;
+
     /**
      * 2.0
      * 新增:
@@ -95,7 +99,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         //统计完工数
         long t1 = System.currentTimeMillis();
         u9MoFinishService.countU9FinishQtyHandler();
-        long t2= System.currentTimeMillis();
+        long t2 = System.currentTimeMillis();
         LogUtil.bizLog("countU9FinishQtyHandler耗时{}", t2 - t1);
 
         List<ApsOrder> orderList = new ArrayList<>();
@@ -115,15 +119,15 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         LogUtil.bizLog("innerOrderModifyHandler耗时{}", t4 - t3);
         //委外更新
         //List<ApsOrder> outerOrders = getSelfService().outerOrderModifyHandler();
-        long t5= System.currentTimeMillis();
+        long t5 = System.currentTimeMillis();
         LogUtil.bizLog("outerOrderModifyHandler耗时{}", t5 - t4);
         //内排新增
-        List<ApsOrder> innerOrdersNew =  getSelfService().innerOrderAddHandler(innerOrderParam);
-        long t6= System.currentTimeMillis();
+        List<ApsOrder> innerOrdersNew = getSelfService().innerOrderAddHandler(innerOrderParam);
+        long t6 = System.currentTimeMillis();
         LogUtil.bizLog("innerOrderAddHandle耗时{}", t6 - t5);
         //委外新增
         //  List<ApsOrder> outerOrdersNew = getSelfService().outerOrderAddHandler(innerOrderParam);
-        long t7= System.currentTimeMillis();
+        long t7 = System.currentTimeMillis();
         LogUtil.bizLog("outerOrderAddHandler耗时{}", t7 - t6);
 
         //  orderList.addAll(outerOrders);
@@ -131,9 +135,9 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         orderList.addAll(innerOrdersNew);
         //   orderList.addAll(outerOrdersNew);
         //分片持久化
-        long t8= System.currentTimeMillis();
+        long t8 = System.currentTimeMillis();
         getSelfService().orderSaveAll(orderList);
-        long t9= System.currentTimeMillis();
+        long t9 = System.currentTimeMillis();
         LogUtil.bizLog("orderSaveAll持久化耗时{}", t9 - t8);
         //生产计划写入已完成数量
         //List<ModifyFinishQtyParamDto> modifyFinishQtyParamDtos = orderList.stream().map(t -> {
@@ -145,13 +149,13 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         //apsOrderPlanService.BatchModifyHasQtyByParam(modifyFinishQtyParamDtos);
 
 
-
         LogUtil.bizLog("pullData_v2总耗时{}", t9 - t1);
 
     }
 
     /**
      * 分片处理，避免大事务
+     *
      * @param orderList
      */
     public void orderSaveAll(List<ApsOrder> orderList) {
@@ -160,13 +164,14 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             for (List<ApsOrder> apsOrders : partition) {
                 getSelfService().save(apsOrders);
             }
-        }else{
+        } else {
             getSelfService().save(orderList);
         }
     }
 
     /**
      * 委外新增
+     *
      * @param innerOrderParam
      * @return
      */
@@ -209,8 +214,9 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
 
     /**
      * 内排订单新增处理
-     * @return
+     *
      * @param innerOrderParam
+     * @return
      */
     public List<ApsOrder> innerOrderAddHandler(CommomOrderParamDto innerOrderParam) {
 
@@ -274,11 +280,12 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             orderList.add(apsOrder);
 
         }
-       return orderList;
+        return orderList;
     }
 
     /**
      * 委外订单新增处理
+     *
      * @return
      */
     public List<ApsOrder> outerOrderModifyHandler() {
@@ -286,7 +293,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         List<OrderAndScmV2> scmOrderExists = getSelfService().queryPurchaseOrderAndExists();
         for (OrderAndScmV2 scmOrderExist : scmOrderExists) {
             ApsOrder apsOrder = new ApsOrder();
-            BeanUtils.copyProperties(scmOrderExist,apsOrder);
+            BeanUtils.copyProperties(scmOrderExist, apsOrder);
             apsOrder.setOweQty(scmOrderExist.getScmXbDelivery().getOweQty());
             apsOrder.setOrderQty(scmOrderExist.getScmXbDelivery().getDeliveryQty());
             apsOrder.setDeliveryStartDate(scmOrderExist.getScmXbDelivery().getDeliveryStartDate());
@@ -301,10 +308,11 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
 
     /**
      * 获取委外更新单
+     *
      * @return
      */
     public List<OrderAndScmV2> queryPurchaseOrderAndExists() {
-        List<Map<String,Object>> scmOrderExists = scmXbDeliveryDao.queryPurchaseOrderAndExists_v2();
+        List<Map<String, Object>> scmOrderExists = scmXbDeliveryDao.queryPurchaseOrderAndExists_v2();
         scmOrderExists = scmOrderExists.stream().map(MapUtil::toCamelCaseMap).collect(Collectors.toList());
         String irsStr = JSON.toJSONString(scmOrderExists);
         List<OrderAndScmV2> orderExistDtos = JSON.parseArray(irsStr, OrderAndScmV2.class);
@@ -313,19 +321,20 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
 
     /**
      * 内排订单更新处理
+     *
      * @param innerOrderParam
      */
-    public List<ApsOrder>  innerOrderModifyHandler(CommomOrderParamDto innerOrderParam) {
+    public List<ApsOrder> innerOrderModifyHandler(CommomOrderParamDto innerOrderParam) {
         List<ApsOrder> orderList = new ArrayList<>();
         List<U9Material> u9MaterialList = innerOrderParam.getU9MaterialList();
-       // List<ApsOrganize> apsOrganizes = innerOrderParam.getApsOrganizes();
+        // List<ApsOrganize> apsOrganizes = innerOrderParam.getApsOrganizes();
         List<OrderAndScmV2> orderExistDtos = getSelfService().queryInnerOrderAndExistsDto();
         for (OrderAndScmV2 orderExist : orderExistDtos) {
             //复制对象
             ApsOrder apsOrder = new ApsOrder();
-            BeanUtils.copyProperties(orderExist,apsOrder);
+            BeanUtils.copyProperties(orderExist, apsOrder);
             Optional<U9Material> material = u9MaterialList.stream().filter(m -> Objects.equals(Long.parseLong(Objects.requireNonNull(m.getId())), apsOrder.getMaterialId())).findFirst();
-            if(!material.isPresent()){
+            if (!material.isPresent()) {
                 continue;
             }
             apsOrder.setProductModel(material.get().getProductModel());
@@ -375,10 +384,11 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
 
     /**
      * 获取需要更新内排订单
+     *
      * @return
      */
     public List<OrderAndScmV2> queryInnerOrderAndExistsDto() {
-        List<Map<String,Object>>  orderExists = scmXbDeliveryDao.queryInnerOrderAndExists_v2();
+        List<Map<String, Object>> orderExists = scmXbDeliveryDao.queryInnerOrderAndExists_v2();
         List<OrderAndScmV2> orderExistDtos = new ArrayList<OrderAndScmV2>(orderExists.size());
         //这里会有内存溢出、处理方法做分片
         List<List<Map<String, Object>>> partitionLists = Lists.partition(orderExists, partitionSize);
@@ -400,10 +410,10 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
      * @param apsOrderDto
      */
     public void updateOrder(ApsOrderDto apsOrderDto) {
-        if(apsOrderDto.getNoPlanQty().subtract(apsOrderDto.getPlanQty()).compareTo(BigDecimal.ZERO)==0){
+        if (apsOrderDto.getNoPlanQty().subtract(apsOrderDto.getPlanQty()).compareTo(BigDecimal.ZERO) == 0) {
             apsOrderDto.setStatus(OrderStatusType.Released);
             apsOrderDto.setNoPlanQty(BigDecimal.ZERO);
-        }else if(apsOrderDto.getNoPlanQty().subtract(apsOrderDto.getPlanQty()).compareTo(BigDecimal.ZERO)>0){
+        } else if (apsOrderDto.getNoPlanQty().subtract(apsOrderDto.getPlanQty()).compareTo(BigDecimal.ZERO) > 0) {
             apsOrderDto.setStatus(OrderStatusType.Release_Part);
             apsOrderDto.setNoPlanQty(apsOrderDto.getNoPlanQty().subtract(apsOrderDto.getPlanQty()));
         }
@@ -454,108 +464,118 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     }
 
     /**
-     *统计
+     * 统计
+     *
      * @return
      */
-    public List<StatisticGridDto> findOrderStatistics(){
-        List<StatisticGridDto>gridList=new ArrayList<>();
-        StatisticGridDto dayPlan=new StatisticGridDto();
-        StatisticGridDto dayFinish=new StatisticGridDto();
-        StatisticGridDto dayPlanRate=new StatisticGridDto();
-        StatisticGridDto weekPlan=new StatisticGridDto();
-        StatisticGridDto weekFinish=new StatisticGridDto();
-        StatisticGridDto weekPlanRate=new StatisticGridDto();
-        StatisticGridDto monthPlan=new StatisticGridDto();
-        StatisticGridDto monthFinish=new StatisticGridDto();
-        StatisticGridDto monthPlanRate=new StatisticGridDto();
+    public List<StatisticGridDto> findOrderStatistics() {
+        List<StatisticGridDto> gridList = new ArrayList<>();
+        StatisticGridDto dayPlan = new StatisticGridDto();
+        StatisticGridDto dayFinish = new StatisticGridDto();
+        StatisticGridDto dayPlanRate = new StatisticGridDto();
+
+        StatisticGridDto weekPlan = new StatisticGridDto();
+        StatisticGridDto weekFinish = new StatisticGridDto();
+        StatisticGridDto weekPlanRate = new StatisticGridDto();
+
+        StatisticGridDto monthPlan = new StatisticGridDto();
+        StatisticGridDto monthFinish = new StatisticGridDto();
+        StatisticGridDto monthPlanRate = new StatisticGridDto();
+
+        //先取出不计算的料号
+        List<String> noCalcMaterial = u9MaterialDao.findByCalcIsFalse().stream().map(a -> a.getCode()).collect(Collectors.toList());
         //日统计
-        LocalDate dayStart=LocalDate.now();
-        LocalDate dayEnd=LocalDate.now();
-
-
-        //当天排产数
-     List<String>planNumByDay= apsOrderPlanDao.findPlanByDate(dayStart, dayEnd).stream().map(a->a.getOrder().getOrderNo()).collect(Collectors.toList());
+        LocalDate dayStart = LocalDate.now();
+        LocalDate dayEnd = LocalDate.now();
+        List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(dayStart, dayEnd).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
         dayPlan.setTitle("当天排产数");
-        dayPlan.setValue(planNumByDay.size()+"");
+        dayPlan.setValue(planNumByDay.size() + "");
         dayPlan.setLinkedUrl("/");
         dayPlan.setPrecision(0);
-
         //当天完工数
         List<U9MoFinish> finishListByDay = u9MoFinishDao.findByFinishDateBetween(dayStart, dayEnd.plusDays(1));
-        List<String> finishDayMoList = finishListByDay.stream().map(a -> a.getOrderNo()).collect(Collectors.toList());
-        long finishNumByDay=  planNumByDay.stream().filter(item->finishDayMoList.contains(item)).count();
+        //剔除不计算料号
+        List<String> finishDayMoList = finishListByDay.stream().map(a -> a.getOrderNo()).filter(b->!noCalcMaterial.contains(b)).collect(Collectors.toList());
+        long finishNumByDay = finishDayMoList.size();
         dayFinish.setTitle("当天完工数");
         dayFinish.setLinkedUrl("/");
         dayFinish.setPrecision(0);
-        dayFinish.setValue(finishNumByDay+"");
-        String  prodSchedRateByDay="0%";
-        if(finishNumByDay>0){
-            BigDecimal rate=new BigDecimal((double) finishNumByDay/planNumByDay.size()*100).setScale(2,BigDecimal.ROUND_HALF_UP);
-            prodSchedRateByDay= rate.toString()+"%";
+        dayFinish.setValue(finishNumByDay + "");
+        long noPlanNumDay=finishDayMoList.stream().filter(a->!planNumByDay.contains(a)).count();
+        StatisticGridDto dayNoPlan=new StatisticGridDto("日未排产数",noPlanNumDay+"");
+        String prodSchedRateByDay = "0%";
+        if (finishNumByDay > 0) {
+            BigDecimal rate = new BigDecimal((double) finishNumByDay / planNumByDay.size() * 100).setScale(2, BigDecimal.ROUND_HALF_UP);
+            prodSchedRateByDay = rate.toString() + "%";
         }
         dayPlanRate.setTitle("当天达成率");
         dayPlanRate.setValue(prodSchedRateByDay);
         dayPlanRate.setLinkedUrl("/");
         //周统计
-        LocalDate weekStart=LocalDate.now().plusDays(-7);
-        LocalDate weekEnd=LocalDate.now();
-        List<String> planNumByWeek = apsOrderPlanDao.findPlanByDate(weekStart, weekEnd).stream().map(a->a.getOrder().getOrderNo()).collect(Collectors.toList());
+        LocalDate weekStart = LocalDate.now().plusDays(-7);
+        LocalDate weekEnd = LocalDate.now();
+        List<String> planNumByWeek = apsOrderPlanDao.findPlanByDate(weekStart, weekEnd).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
         weekPlan.setTitle("周排产数");
-        weekPlan.setValue(planNumByWeek.size()+"");
+        weekPlan.setValue(planNumByWeek.size() + "");
         weekPlan.setLinkedUrl("/");
         weekPlan.setPrecision(0);
         List<U9MoFinish> finisListByWeek = u9MoFinishDao.findByFinishDateBetween(weekStart, weekEnd.plusDays(1));
-        List<String>  finishWeekMoList = finisListByWeek.stream().map(a -> a.getOrderNo()).collect(Collectors.toList());
-        long finishNumByWeek=  planNumByWeek.stream().filter(item->finishWeekMoList.contains(item)).count();
+        List<String> finishWeekMoList = finisListByWeek.stream().map(a -> a.getOrderNo()).filter(b->!noCalcMaterial.contains(b)).collect(Collectors.toList());
+        long finishNumByWeek =finishWeekMoList.size();
         weekFinish.setTitle("周完工数");
         weekFinish.setPrecision(0);
-        weekFinish.setValue(finishNumByWeek+"");
+        weekFinish.setValue(finishNumByWeek + "");
         weekFinish.setLinkedUrl("/");
-
-        String  prodSchedRateByWeek="0%";
-        if(finishNumByWeek>0) {
-            BigDecimal rate=new BigDecimal((double)finishNumByWeek/planNumByWeek.size()*100).setScale(2,BigDecimal.ROUND_HALF_UP);
-            prodSchedRateByWeek= rate.toString()+"%";
+        long noPlanNumWeek=finishWeekMoList.stream().filter(a->!planNumByWeek.contains(a)).count();
+        StatisticGridDto weekNoPlan=new StatisticGridDto("周未排产数",noPlanNumWeek+"");
+        String prodSchedRateByWeek = "0%";
+        if (finishNumByWeek > 0) {
+            BigDecimal rate = new BigDecimal((double) finishNumByWeek / planNumByWeek.size() * 100).setScale(2, BigDecimal.ROUND_HALF_UP);
+            prodSchedRateByWeek = rate.toString() + "%";
         }
         weekPlanRate.setTitle("周达产率");
         weekPlanRate.setValue(prodSchedRateByWeek);
         weekPlanRate.setLinkedUrl("/");
         //月统计
-        LocalDate monthStart=LocalDate.now().plusDays(-30);
-        LocalDate monthEnd=LocalDate.now();
-        List<String> planNumByMonth = apsOrderPlanDao.findPlanByDate(monthStart, monthEnd).stream().map(a->a.getOrder().getOrderNo()).collect(Collectors.toList());
+        LocalDate monthStart = LocalDate.now().plusDays(-30);
+        LocalDate monthEnd = LocalDate.now();
+        List<String> planNumByMonth = apsOrderPlanDao.findPlanByDate(monthStart, monthEnd).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
         monthPlan.setTitle("月排产数");
-        monthPlan.setValue(planNumByMonth.size()+"");
+        monthPlan.setValue(planNumByMonth.size() + "");
         monthPlan.setLinkedUrl("/");
         monthPlan.setPrecision(0);
         List<U9MoFinish> finishMoByMonth = u9MoFinishDao.findByFinishDateBetween(monthStart, monthEnd.plusDays(1));
-        List<String>  finishMonthMoList = finishMoByMonth.stream().map(a -> a.getOrderNo()).collect(Collectors.toList());
-        long finishNumByMonth=  planNumByMonth.stream().filter(item->finishMonthMoList.contains(item)).count();
+        List<String> finishMonthMoList = finishMoByMonth.stream().map(a -> a.getOrderNo()).filter(b->!noCalcMaterial.contains(b)).collect(Collectors.toList());
+        long finishNumByMonth = finishMonthMoList.size();
         monthPlan.setTitle("月排产数");
-        monthPlan.setValue(planNumByMonth.size()+"");
+        monthPlan.setValue(planNumByMonth.size() + "");
         monthPlan.setLinkedUrl("/");
         monthPlan.setPrecision(0);
         monthFinish.setTitle("月完工数");
-        monthFinish.setValue(finishNumByMonth+"");
+        monthFinish.setValue(finishNumByMonth + "");
         monthFinish.setLinkedUrl("/");
         monthFinish.setPrecision(0);
-
-        String  prodSchedRateByMonth="0%";
-        if(finishNumByMonth>0) {
-            BigDecimal rate=new BigDecimal((double)finishNumByMonth/planNumByMonth.size()*100).setScale(2,BigDecimal.ROUND_HALF_UP);
-            prodSchedRateByMonth= rate.toString()+"%";
+        long noPlanNumMonth=finishMonthMoList.stream().filter(a->!planNumByMonth.contains(a)).count();
+        StatisticGridDto monthNoPlan=new StatisticGridDto("周未排产数",noPlanNumMonth+"");
+        String prodSchedRateByMonth = "0%";
+        if (finishNumByMonth > 0) {
+            BigDecimal rate = new BigDecimal((double) finishNumByMonth / planNumByMonth.size() * 100).setScale(2, BigDecimal.ROUND_HALF_UP);
+            prodSchedRateByMonth = rate.toString() + "%";
         }
         monthPlanRate.setTitle("月达成率");
         monthPlanRate.setLinkedUrl("/");
         monthPlanRate.setValue(prodSchedRateByMonth);
         gridList.add(dayPlan);
         gridList.add(dayFinish);
+        gridList.add(dayNoPlan);
         gridList.add(dayPlanRate);
         gridList.add(weekPlan);
         gridList.add(weekFinish);
+        gridList.add(weekNoPlan);
         gridList.add(weekPlanRate);
         gridList.add(monthPlan);
         gridList.add(monthFinish);
+        gridList.add(monthNoPlan);
         gridList.add(monthPlanRate);
         return gridList;
     }

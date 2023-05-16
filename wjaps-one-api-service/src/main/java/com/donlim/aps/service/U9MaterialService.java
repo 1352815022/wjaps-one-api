@@ -4,6 +4,7 @@ import com.changhong.sei.core.dao.BaseEntityDao;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.donlim.aps.dao.U9BomDao;
 import com.donlim.aps.dao.U9MaterialDao;
+import com.donlim.aps.dto.U9MaterialDto;
 import com.donlim.aps.dto.upload.EndQtyDTO;
 import com.donlim.aps.dto.upload.PowerDTO;
 import com.donlim.aps.entity.U9Bom;
@@ -90,6 +91,22 @@ public class U9MaterialService extends BaseEntityService<U9Material> {
             if(dto.isPresent()){
                 u9Material.setEndQty(dto.get().getEndQty());
             }
+        }
+        save(byCodeInList);
+
+    }
+    /**
+     * 保存上月期末数
+     *
+     * @param u9MaterialDtoList
+     * @throws IOException
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void uploadMaterialType(List<U9MaterialDto> u9MaterialDtoList) throws IOException {
+        List<String> codeList = u9MaterialDtoList.stream().map(U9MaterialDto::getCode).collect(Collectors.toList());
+        List<U9Material> byCodeInList = dao.findByCodeIn(codeList);
+        for (U9Material u9Material :byCodeInList){
+            u9Material.setCalc(false);
         }
         save(byCodeInList);
 

@@ -18,5 +18,7 @@ public class ApsPlanDetailDto {
     private String docNo;
     private String workGroup;
     private String line;
+    private String moId;
+    private Integer status;
 
 }

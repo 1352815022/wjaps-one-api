@@ -3,9 +3,11 @@ package com.donlim.aps.controller;
 import com.changhong.sei.core.dto.ResultData;
 import com.donlim.aps.api.ApsOpenApi;
 import com.donlim.aps.dao.ApsOrderPlanDetailDao;
+import com.donlim.aps.dao.U9ProduceOrderDao;
 import com.donlim.aps.dto.open.ApsPlanDetailDto;
 import com.donlim.aps.dto.open.ApsPlanDto;
 import com.donlim.aps.entity.ApsOrderPlanDetail;
+import com.donlim.aps.entity.U9ProduceOrder;
 import io.swagger.annotations.Api;
 import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,8 @@ public class ApsOpenController implements ApsOpenApi {
 
     @Autowired
     private ApsOrderPlanDetailDao apsOrderPlanDetailDao;
+    @Autowired
+    private U9ProduceOrderDao u9ProduceOrderDao;
 
     @Override
     public ResultData<ApsPlanDto> getPlanByDate(String date) {
@@ -47,6 +51,9 @@ public class ApsOpenController implements ApsOpenApi {
             detail.setDocNo(plan.getApsOrderPlan().getOrder().getOrderNo());
             detail.setWorkGroup(plan.getApsOrderPlan().getWorkGroupName());
             detail.setLine(plan.getApsOrderPlan().getLineName());
+            U9ProduceOrder produceOrder = u9ProduceOrderDao.findAllByDocNo(detail.getDocNo());
+            detail.setMoId(produceOrder.getId());
+            detail.setStatus(produceOrder.getStatus());
             detailList.add(detail);
         }
         apsPlanDto.setApsPlanDetailDtoList(detailList);

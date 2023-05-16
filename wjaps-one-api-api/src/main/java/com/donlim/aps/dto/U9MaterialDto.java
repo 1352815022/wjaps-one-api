@@ -109,6 +109,14 @@ public class U9MaterialDto extends BaseEntityDto {
      */
     @ApiModelProperty(value = "是否冻结")
     private Boolean frozen;
+
+
+    /**
+     * 是否计算
+     */
+    @ApiModelProperty(value = "是否计算")
+    private Boolean calc;
+
     /**
      * 租户代码
      */

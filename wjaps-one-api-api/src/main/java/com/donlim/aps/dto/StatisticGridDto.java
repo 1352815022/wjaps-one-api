@@ -33,4 +33,16 @@ public class StatisticGridDto {
     private String value;
 
     private Integer precision;
+
+    public StatisticGridDto(){
+
+    }
+
+    public StatisticGridDto(String title,String value){
+        this.title=title;
+        this.value=value;
+        this.linkedUrl="/";
+        this.precision=0;
+
+    }
 }

@@ -1,5 +1,7 @@
 package com.donlim.aps.dto.upload;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 
 /**
@@ -8,6 +10,7 @@ import java.math.BigDecimal;
  * @Author p09835
  * @Date 2022/7/16 8:57
  **/
+@Data
 public class EndQtyDTO {
 
     /**
@@ -20,19 +23,7 @@ public class EndQtyDTO {
      */
     private BigDecimal endQty;
 
-    public String getMaterialCode() {
-        return materialCode;
-    }
-
-    public void setMaterialCode(String materialCode) {
-        this.materialCode = materialCode;
-    }
-
-    public BigDecimal getEndQty() {
-        return endQty;
-    }
-
-    public void setEndQty(BigDecimal endQty) {
-        this.endQty = endQty;
-    }
+    private Boolean calc;
 }
+
+

@@ -57,4 +57,10 @@ public class U9MaterialController extends BaseEntityController<U9Material, U9Mat
         service.uploadPower(list);
         return ResultData.success();
     }
+
+    @Override
+    public ResultData<String> uploadMaterialType(List<U9MaterialDto> list) throws IOException {
+        service.uploadMaterialType(list);
+        return ResultData.success();
+    }
 }
