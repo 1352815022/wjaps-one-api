@@ -502,7 +502,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         dayFinish.setPrecision(0);
         dayFinish.setValue(finishNumByDay + "");
         long noPlanNumDay=finishDayMoList.stream().filter(a->!planNumByDay.contains(a)).count();
-        StatisticGridDto dayNoPlan=new StatisticGridDto("日未排产数",noPlanNumDay+"");
+        StatisticGridDto dayNoPlan=new StatisticGridDto("当天未排产数",noPlanNumDay+"");
         String prodSchedRateByDay = "0%";
         if (finishNumByDay > 0) {
             BigDecimal rate = new BigDecimal((double) finishNumByDay / planNumByDay.size() * 100).setScale(2, BigDecimal.ROUND_HALF_UP);
@@ -556,7 +556,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         monthFinish.setLinkedUrl("/");
         monthFinish.setPrecision(0);
         long noPlanNumMonth=finishMonthMoList.stream().filter(a->!planNumByMonth.contains(a)).count();
-        StatisticGridDto monthNoPlan=new StatisticGridDto("周未排产数",noPlanNumMonth+"");
+        StatisticGridDto monthNoPlan=new StatisticGridDto("月未排产数",noPlanNumMonth+"");
         String prodSchedRateByMonth = "0%";
         if (finishNumByMonth > 0) {
             BigDecimal rate = new BigDecimal((double) finishNumByMonth / planNumByMonth.size() * 100).setScale(2, BigDecimal.ROUND_HALF_UP);
