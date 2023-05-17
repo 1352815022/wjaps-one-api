@@ -68,6 +68,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     private U9MoFinishDao u9MoFinishDao;
     @Autowired
     private U9MaterialDao u9MaterialDao;
+    @Autowired
+    private U9ProduceOrderService u9ProduceOrderService;
 
     @Override
     protected BaseEntityDao<ApsOrder> getDao() {
@@ -494,8 +496,15 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         dayPlan.setPrecision(0);
         //当天完工数
         List<U9MoFinish> finishListByDay = u9MoFinishDao.findByFinishDateBetween(dayStart, dayEnd.plusDays(1));
+        List<String> finishDayMoList=new ArrayList<>();
+        for (U9MoFinish u9MoFinish : finishListByDay) {
+            U9ProduceOrder listByOrderNo = u9ProduceOrderService.getListByOrderNo(u9MoFinish.getOrderNo());
+            if(!noCalcMaterial.contains(listByOrderNo.getMaterialCode())){
+                finishDayMoList.add(u9MoFinish.getOrderNo());
+            }
+        }
         //剔除不计算料号
-        List<String> finishDayMoList = finishListByDay.stream().map(a -> a.getOrderNo()).filter(b->!noCalcMaterial.contains(b)).collect(Collectors.toList());
+       // List<String> finishDayMoList = finishListByDay.stream().map(a -> a.getOrderNo()).filter(b->!noCalcMaterial.contains(b)).collect(Collectors.toList());
         long finishNumByDay = finishDayMoList.size();
         dayFinish.setTitle("当天完工数");
         dayFinish.setLinkedUrl("/");
@@ -520,7 +529,13 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         weekPlan.setLinkedUrl("/");
         weekPlan.setPrecision(0);
         List<U9MoFinish> finisListByWeek = u9MoFinishDao.findByFinishDateBetween(weekStart, weekEnd.plusDays(1));
-        List<String> finishWeekMoList = finisListByWeek.stream().map(a -> a.getOrderNo()).filter(b->!noCalcMaterial.contains(b)).collect(Collectors.toList());
+        List<String> finishWeekMoList=new ArrayList<>();
+        for (U9MoFinish u9MoFinish : finisListByWeek) {
+            U9ProduceOrder listByOrderNo = u9ProduceOrderService.getListByOrderNo(u9MoFinish.getOrderNo());
+            if(!noCalcMaterial.contains(listByOrderNo.getMaterialCode())){
+                finishWeekMoList.add(u9MoFinish.getOrderNo());
+            }
+        }
         long finishNumByWeek =finishWeekMoList.size();
         weekFinish.setTitle("周完工数");
         weekFinish.setPrecision(0);
@@ -545,7 +560,14 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         monthPlan.setLinkedUrl("/");
         monthPlan.setPrecision(0);
         List<U9MoFinish> finishMoByMonth = u9MoFinishDao.findByFinishDateBetween(monthStart, monthEnd.plusDays(1));
-        List<String> finishMonthMoList = finishMoByMonth.stream().map(a -> a.getOrderNo()).filter(b->!noCalcMaterial.contains(b)).collect(Collectors.toList());
+        List<String> finishMonthMoList=new ArrayList<>();
+        for (U9MoFinish u9MoFinish : finishMoByMonth) {
+            U9ProduceOrder listByOrderNo = u9ProduceOrderService.getListByOrderNo(u9MoFinish.getOrderNo());
+            if(!noCalcMaterial.contains(listByOrderNo.getMaterialCode())){
+                finishMonthMoList.add(u9MoFinish.getOrderNo());
+            }
+        }
+
         long finishNumByMonth = finishMonthMoList.size();
         monthPlan.setTitle("月排产数");
         monthPlan.setValue(planNumByMonth.size() + "");

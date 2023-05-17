@@ -133,8 +133,8 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
         List<U9MoFinish> finishListByDay = u9MoFinishDao.findByFinishDateBetween(date, date.plusDays(1));
         //先取出不计算的料号
         List<String> noCalcMaterial = u9MaterialDao.findByCalcIsFalse().stream().map(a -> a.getCode()).collect(Collectors.toList());
-        //剔除不计算料号
-        List<String> finishDayMoList = finishListByDay.stream().map(a -> a.getOrderNo()).filter(b->!noCalcMaterial.contains(b)).collect(Collectors.toList());
+
+        List<String> finishDayMoList = finishListByDay.stream().map(a -> a.getOrderNo()).collect(Collectors.toList());
         List<String> list = finishDayMoList.stream().filter(a -> !planNumByDay.contains(a)).collect(Collectors.toList());
         for (String mo : list) {
             Optional<U9MoFinish> u9MoFinish = finishListByDay.stream().filter(s -> s.getOrderNo().equals(mo)).findFirst();
@@ -142,9 +142,13 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
                 U9MoFinishDto u9MoFinishDto=new U9MoFinishDto();
                 BeanUtils.copyProperties(u9MoFinish.get(),u9MoFinishDto);
                 U9ProduceOrder listByOrderNo = u9ProduceOrderService.getListByOrderNo(u9MoFinish.get().getOrderNo());
-                u9MoFinishDto.setMaterialCode(listByOrderNo.getMaterialCode());
-                u9MoFinishDto.setMaterialName(listByOrderNo.getMaterialName());
-                dtoList.add(u9MoFinishDto);
+                //剔除不计算料号
+                if(!noCalcMaterial.contains(listByOrderNo.getMaterialCode())){
+                    u9MoFinishDto.setMaterialCode(listByOrderNo.getMaterialCode());
+                    u9MoFinishDto.setMaterialName(listByOrderNo.getMaterialName());
+                    dtoList.add(u9MoFinishDto);
+                }
+
             }
         }
         return  dtoList;
