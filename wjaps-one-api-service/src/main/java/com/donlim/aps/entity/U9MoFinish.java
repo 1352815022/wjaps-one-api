@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 /**
- * U9数据扩展字段(U9MoFinish)实体类
+ * U9完工表实体类
  *
  * @author sei
  * @since 2023-04-08 11:27:28

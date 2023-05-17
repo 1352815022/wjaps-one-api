@@ -3,23 +3,28 @@ package com.donlim.aps.service;
 import cn.hutool.core.map.MapUtil;
 import com.alibaba.fastjson.JSON;
 import com.changhong.sei.core.dao.BaseEntityDao;
+import com.changhong.sei.core.dto.serach.PageResult;
+import com.changhong.sei.core.dto.serach.Search;
+import com.changhong.sei.core.dto.serach.SearchFilter;
 import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.BaseEntityService;
+import com.donlim.aps.dao.ApsOrderPlanDao;
+import com.donlim.aps.dao.U9MaterialDao;
 import com.donlim.aps.dao.U9MoFinishDao;
-import com.donlim.aps.entity.ApsOrder;
-import com.donlim.aps.entity.ApsOrderExt;
-import com.donlim.aps.entity.U9MoFinish;
-import com.donlim.aps.entity.U9MoPickList;
+import com.donlim.aps.dto.U9MoFinishDto;
+import com.donlim.aps.entity.*;
 import com.donlim.aps.entity.cust.OrderAndScmV2;
+import com.donlim.aps.util.DateUtils;
 import com.google.common.collect.Lists;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -34,6 +39,12 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
     private U9MoFinishDao u9MoFinishDao;
     @Autowired
     private ApsOrderExtService apsOrderExtService;
+    @Autowired
+    U9ProduceOrderService u9ProduceOrderService;
+    @Autowired
+    private ApsOrderPlanDao apsOrderPlanDao;
+    @Autowired
+    private U9MaterialDao u9MaterialDao;
 
 
     @Override
@@ -79,6 +90,59 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
             }
         }
         return u9FinishTotalDtos;
+    }
+
+    /**
+     * 加载工单信息
+     * @param search
+     * @return
+     */
+    public PageResult<U9MoFinishDto>getList(Search search){
+        PageResult<U9MoFinish> page = findByPage(search);
+        ArrayList<U9MoFinish> rows = page.getRows();
+        List<U9MoFinishDto>dtoList=new ArrayList<>();
+        for (U9MoFinish u9MoFinish : rows) {
+            U9MoFinishDto u9MoFinishDto=new U9MoFinishDto();
+            BeanUtils.copyProperties(u9MoFinish,u9MoFinishDto);
+            U9ProduceOrder listByOrderNo = u9ProduceOrderService.getListByOrderNo(u9MoFinish.getOrderNo());
+            u9MoFinishDto.setMaterialCode(listByOrderNo.getMaterialCode());
+            u9MoFinishDto.setMaterialName(listByOrderNo.getMaterialName());
+            dtoList.add(u9MoFinishDto);
+        }
+        PageResult<U9MoFinishDto> pageDto=new PageResult<>();
+        BeanUtils.copyProperties(page,pageDto);
+        pageDto.setRows(dtoList);
+        return pageDto;
+    }
+
+    public List<U9MoFinishDto> findNoPlan(Search search){
+        LocalDate date = LocalDate.now();
+        Optional<SearchFilter> finishDate = search.getFilters().stream().filter(a -> a.getFieldName().equals("finishDate")).findFirst();
+        if(finishDate.isPresent()){
+            date= DateUtils.date2LocalDate((Date)finishDate.get().getValue());
+        }
+        List<U9MoFinishDto> dtoList=new ArrayList<>();
+        //取出当天计划单
+        List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(date,date).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
+        //当天完工数
+        List<U9MoFinish> finishListByDay = u9MoFinishDao.findByFinishDateBetween(date, date.plusDays(1));
+        //先取出不计算的料号
+        List<String> noCalcMaterial = u9MaterialDao.findByCalcIsFalse().stream().map(a -> a.getCode()).collect(Collectors.toList());
+        //剔除不计算料号
+        List<String> finishDayMoList = finishListByDay.stream().map(a -> a.getOrderNo()).filter(b->!noCalcMaterial.contains(b)).collect(Collectors.toList());
+        List<String> list = finishDayMoList.stream().filter(a -> !planNumByDay.contains(a)).collect(Collectors.toList());
+        for (String mo : list) {
+            Optional<U9MoFinish> u9MoFinish = finishListByDay.stream().filter(s -> s.getOrderNo().equals(mo)).findFirst();
+            if(u9MoFinish.isPresent()){
+                U9MoFinishDto u9MoFinishDto=new U9MoFinishDto();
+                BeanUtils.copyProperties(u9MoFinish.get(),u9MoFinishDto);
+                U9ProduceOrder listByOrderNo = u9ProduceOrderService.getListByOrderNo(u9MoFinish.get().getOrderNo());
+                u9MoFinishDto.setMaterialCode(listByOrderNo.getMaterialCode());
+                u9MoFinishDto.setMaterialName(listByOrderNo.getMaterialName());
+                dtoList.add(u9MoFinishDto);
+            }
+        }
+        return  dtoList;
     }
 
 }
