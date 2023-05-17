@@ -115,6 +115,11 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
         return pageDto;
     }
 
+    /**
+     * 没有排计划的完工单
+     * @param search
+     * @return
+     */
     public List<U9MoFinishDto> findNoPlan(Search search){
         LocalDate date = LocalDate.now();
         Optional<SearchFilter> finishDate = search.getFilters().stream().filter(a -> a.getFieldName().equals("finishDate")).findFirst();
