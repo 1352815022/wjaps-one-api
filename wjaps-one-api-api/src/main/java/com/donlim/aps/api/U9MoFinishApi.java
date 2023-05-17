@@ -38,6 +38,4 @@ public interface U9MoFinishApi extends BaseEntityApi<U9MoFinishDto>, FindByPageA
     @ApiOperation(value = "分页查询业务实体", notes = "分页查询业务实体")
     ResultData<List<U9MoFinishDto>> findNoPlan(@RequestBody Search search);
 
-
-
 }
