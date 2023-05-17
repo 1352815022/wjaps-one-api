@@ -36,6 +36,7 @@ public class ApsOrderControllerTest extends BaseUnitTest {
         list2.add("4444");
         List<String> reduce1 = list1.stream().filter(item -> !list2.contains(item)).collect(Collectors.toList());
         System.out.println("---得到差集 reduce1 (list1 - list2)---");
+
         reduce1.parallelStream().forEach(System.out::println);
      /*   long l1 = System.currentTimeMillis();
         ResultData<String> result = apsOrderController.initApsOrder();
