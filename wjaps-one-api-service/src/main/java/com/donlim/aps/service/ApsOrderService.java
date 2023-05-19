@@ -472,7 +472,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
      *
      * @return
      */
-    @Transactional
+
     public List<StatisticGridDto> findOrderStatistics() {
         List<StatisticGridDto> gridList = new ArrayList<>();
         StatisticGridDto dayPlan = new StatisticGridDto();
@@ -607,16 +607,17 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         if(byDate.isPresent()){
             apsDayReport=byDate.get();
         }else{
-             apsDayReport=new ApsDayReport();
              apsDayReport.setDate(LocalDate.now());
         }
         apsDayReport.setFinishQty(finishNumByDay);
         apsDayReport.setNoPlanQty(noPlanNumDay);
         apsDayReport.setPlanQty((long) planNumByDay.size());
         apsDayReport.setPlanRate(prodSchedRateByDay);
-        apsDayReportDao.save(apsDayReport);
+        saveReport(apsDayReport);
         return gridList;
     }
-
-
+    @Transactional
+    public void saveReport(ApsDayReport apsDayReport){
+        apsDayReportDao.save(apsDayReport);
+    }
 }
