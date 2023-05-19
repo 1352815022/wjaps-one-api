@@ -1,6 +1,9 @@
 package com.donlim.aps.controller;
 
 import com.changhong.sei.core.controller.BaseEntityController;
+import com.changhong.sei.core.dto.ResultData;
+import com.changhong.sei.core.dto.serach.PageResult;
+import com.changhong.sei.core.dto.serach.Search;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.donlim.aps.api.ApsDayReportApi;
 import com.donlim.aps.dto.ApsDayReportDto;
@@ -33,4 +36,8 @@ public class ApsDayReportController extends BaseEntityController<ApsDayReport, A
         return service;
     }
 
+    @Override
+    public ResultData<PageResult<ApsDayReportDto>> findByPage(Search search) {
+        return convertToDtoPageResult(service.findByPage(search));
+    }
 }
