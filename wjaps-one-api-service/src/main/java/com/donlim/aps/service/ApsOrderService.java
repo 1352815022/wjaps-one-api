@@ -70,6 +70,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     private U9MaterialDao u9MaterialDao;
     @Autowired
     private U9ProduceOrderService u9ProduceOrderService;
+    @Autowired
+    private ApsDayReportDao apsDayReportDao;
 
     @Override
     protected BaseEntityDao<ApsOrder> getDao() {
@@ -599,6 +601,21 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         gridList.add(monthFinish);
         gridList.add(monthNoPlan);
         gridList.add(monthPlanRate);
+        ApsDayReport apsDayReport=new ApsDayReport();
+        Optional<ApsDayReport> byDate = apsDayReportDao.findByDate(LocalDate.now());
+        if(byDate.isPresent()){
+            apsDayReport=byDate.get();
+        }else{
+             apsDayReport=new ApsDayReport();
+             apsDayReport.setDate(LocalDate.now());
+        }
+        apsDayReport.setFinishQty(finishNumByDay);
+        apsDayReport.setNoPlanQty(noPlanNumDay);
+        apsDayReport.setPlanQty((long) planNumByDay.size());
+        apsDayReport.setPlanRate(prodSchedRateByDay);
+        apsDayReportDao.save(apsDayReport);
         return gridList;
     }
+
+
 }
