@@ -472,6 +472,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
      *
      * @return
      */
+    @Transactional
     public List<StatisticGridDto> findOrderStatistics() {
         List<StatisticGridDto> gridList = new ArrayList<>();
         StatisticGridDto dayPlan = new StatisticGridDto();
