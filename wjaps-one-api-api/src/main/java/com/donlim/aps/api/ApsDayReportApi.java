@@ -1,7 +1,9 @@
 package com.donlim.aps.api;
 
 import com.changhong.sei.core.api.BaseEntityApi;
+import com.changhong.sei.core.api.FindByPageApi;
 import com.donlim.aps.dto.ApsDayReportDto;
+import com.donlim.aps.dto.ApsHolidayDto;
 import org.springframework.cloud.openfeign.FeignClient;
 
 import javax.validation.Valid;
@@ -15,6 +17,6 @@ import javax.validation.Valid;
  */
 @Valid
 @FeignClient(name = "wjaps-one-api", path = ApsDayReportApi.PATH)
-public interface ApsDayReportApi extends BaseEntityApi<ApsDayReportDto> {
+public interface ApsDayReportApi extends BaseEntityApi<ApsDayReportDto> , FindByPageApi<ApsDayReportDto> {
     String PATH = "apsDayReport";
 }
