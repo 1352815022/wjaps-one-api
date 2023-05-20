@@ -102,7 +102,7 @@ public interface ApsOrderApi extends BaseEntityApi<ApsOrderDto> , FindByPageApi<
      * 控制台
      * @return
      */
-    @GetMapping(path = "findOrderStatistic")
+    @PostMapping(path = "findOrderStatistic")
     @ApiOperation(value = "控制台",notes = "控制台")
     ResultData<List<StatisticGridDto>> findOrderStatistic();
 
