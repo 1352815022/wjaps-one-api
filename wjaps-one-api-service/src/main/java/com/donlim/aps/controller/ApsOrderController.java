@@ -79,6 +79,12 @@ public class ApsOrderController extends BaseEntityController<ApsOrder, ApsOrderD
         return ResultData.success(list);
     }
 
+    @Override
+    public ResultData<String> updateOrderStatistic() {
+        service.updateDayStatistics();
+        return ResultData.success();
+    }
+
 
     /**
      * 修改内排单据状态，同时修改排产单状态

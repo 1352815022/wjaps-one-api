@@ -602,22 +602,46 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         gridList.add(monthFinish);
         gridList.add(monthNoPlan);
         gridList.add(monthPlanRate);
+        return gridList;
+    }
+
+
+    /**
+     * 更新日统计
+     */
+    @Transactional
+    public void updateDayStatistics() {
+        List<String> noCalcMaterial = u9MaterialDao.findByCalcIsFalse().stream().map(a -> a.getCode()).collect(Collectors.toList());
+        //日统计
+        LocalDate dayStart = LocalDate.now();
+        LocalDate dayEnd = LocalDate.now();
+        List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(dayStart, dayEnd).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
+        //当天完工数
+        List<U9MoFinish> finishListByDay = u9MoFinishDao.findByFinishDateBetween(dayStart, dayEnd.plusDays(1));
+        List<String> finishDayMoList=new ArrayList<>();
+        for (U9MoFinish u9MoFinish : finishListByDay) {
+            U9ProduceOrder listByOrderNo = u9ProduceOrderService.getListByOrderNo(u9MoFinish.getOrderNo());
+            if(!noCalcMaterial.contains(listByOrderNo.getMaterialCode())){
+                finishDayMoList.add(u9MoFinish.getOrderNo());
+            }
+        }
+        long finishNumByDay = finishDayMoList.size();
+        long noPlanNumDay=finishDayMoList.stream().filter(a->!planNumByDay.contains(a)).count();
+        String prodSchedRateByDay = "0%";
+        if (finishNumByDay > 0) {
+            BigDecimal rate = new BigDecimal((double) finishNumByDay / planNumByDay.size() * 100).setScale(2, BigDecimal.ROUND_HALF_UP);
+            prodSchedRateByDay = rate.toString() + "%";
+        }
         ApsDayReport apsDayReport=new ApsDayReport();
         Optional<ApsDayReport> byDate = apsDayReportDao.findByDate(LocalDate.now());
         if(byDate.isPresent()){
             apsDayReport=byDate.get();
-        }else{
-             apsDayReport.setDate(LocalDate.now());
         }
+        apsDayReport.setDate(LocalDate.now());
         apsDayReport.setFinishQty(finishNumByDay);
         apsDayReport.setNoPlanQty(noPlanNumDay);
         apsDayReport.setPlanQty((long) planNumByDay.size());
         apsDayReport.setPlanRate(prodSchedRateByDay);
-        saveReport(apsDayReport);
-        return gridList;
-    }
-    @Transactional
-    public void saveReport(ApsDayReport apsDayReport){
         apsDayReportDao.save(apsDayReport);
     }
 }
