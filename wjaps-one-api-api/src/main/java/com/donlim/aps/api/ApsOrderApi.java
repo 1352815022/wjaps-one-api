@@ -110,7 +110,7 @@ public interface ApsOrderApi extends BaseEntityApi<ApsOrderDto> , FindByPageApi<
      * 控制台
      * @return
      */
-    @GetMapping(path = "updateOrderStatistic",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "updateOrderStatistic",consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "更新日报",notes = "更新日报")
     ResultData<String> updateOrderStatistic();
 }
