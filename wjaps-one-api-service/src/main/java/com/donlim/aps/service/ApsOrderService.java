@@ -609,12 +609,12 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     /**
      * 更新日统计
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateDayStatistics() {
         List<String> noCalcMaterial = u9MaterialDao.findByCalcIsFalse().stream().map(a -> a.getCode()).collect(Collectors.toList());
         //日统计
-        LocalDate dayStart = LocalDate.now();
-        LocalDate dayEnd = LocalDate.now();
+        LocalDate dayStart = LocalDate.now().plusDays(-2);
+        LocalDate dayEnd = LocalDate.now().plusDays(-2);
         List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(dayStart, dayEnd).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
         //当天完工数
         List<U9MoFinish> finishListByDay = u9MoFinishDao.findByFinishDateBetween(dayStart, dayEnd.plusDays(1));
@@ -633,15 +633,16 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
             prodSchedRateByDay = rate.toString() + "%";
         }
         ApsDayReport apsDayReport=new ApsDayReport();
-        Optional<ApsDayReport> byDate = apsDayReportDao.findByDate(LocalDate.now());
+        Optional<ApsDayReport> byDate = apsDayReportDao.findByDate(dayStart);
         if(byDate.isPresent()){
             apsDayReport=byDate.get();
         }
-        apsDayReport.setDate(LocalDate.now());
+        apsDayReport.setDate(dayStart);
         apsDayReport.setFinishQty(finishNumByDay);
         apsDayReport.setNoPlanQty(noPlanNumDay);
         apsDayReport.setPlanQty((long) planNumByDay.size());
         apsDayReport.setPlanRate(prodSchedRateByDay);
         apsDayReportDao.save(apsDayReport);
+
     }
 }
