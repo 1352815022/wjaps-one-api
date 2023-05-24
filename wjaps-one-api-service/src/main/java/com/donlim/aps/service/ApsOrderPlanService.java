@@ -789,7 +789,8 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
         result.put("productionDate", plan.getProductionDate());
         result.put("remark", plan.getRemark());
         result.put("u9Status", plan.getU9Status());
-
+        result.put("lastEditorName",plan.getLastEditorName());
+        result.put("lastEditedDate",plan.getLastEditedDate());
         return result;
     }
 
