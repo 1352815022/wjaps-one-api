@@ -34,7 +34,7 @@ public class ApsOrderPlan extends BaseAuditableEntity implements Serializable {
     /**
      * 订单
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id",insertable = false,updatable = false)
     private ApsOrder order;
     /**
@@ -53,7 +53,7 @@ public class ApsOrderPlan extends BaseAuditableEntity implements Serializable {
     @Column(name = "material_id")
     private Long materialId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "material_id",insertable = false,updatable = false)
     private U9Material material;
 
