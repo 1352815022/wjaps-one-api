@@ -27,7 +27,7 @@ public class ApsOrderPlanDetail extends BaseAuditableEntity implements Serializa
     @Column(name = "plan_id")
     private String planId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id",insertable = false,updatable = false)
     private ApsOrderPlan apsOrderPlan;
     /**

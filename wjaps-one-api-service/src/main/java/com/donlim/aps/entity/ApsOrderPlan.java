@@ -182,7 +182,7 @@ public class ApsOrderPlan extends BaseAuditableEntity implements Serializable {
     /**
      * 映射出明细表
      */
-    @OneToMany(targetEntity = ApsOrderPlanDetail.class)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id",insertable = false,updatable = false)
     private List<ApsOrderPlanDetail> orderPlanDetails;
 
