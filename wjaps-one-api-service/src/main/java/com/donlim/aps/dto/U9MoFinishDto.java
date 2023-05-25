@@ -18,8 +18,8 @@ import java.util.Date;
  * @author sei
  * @since 2023-04-08 11:27:31
  */
-@ApiModel(description = "U9数据扩展字段DTO")
 @Data
+@ApiModel(description = "U9数据扩展字段DTO")
 public class U9MoFinishDto extends BaseEntityDto {
     private static final long serialVersionUID = 729699186384623251L;
     /**

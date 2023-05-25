@@ -128,7 +128,7 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
         }
         List<U9MoFinishDto> dtoList=new ArrayList<>();
         //取出当天计划单
-        List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(date,date).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
+        List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(date,date);
         //当天完工数
         List<U9MoFinish> finishListByDay = u9MoFinishDao.findByFinishDateBetween(date, date.plusDays(1));
         //先取出不计算的料号

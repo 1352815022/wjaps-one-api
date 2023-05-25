@@ -492,7 +492,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         //日统计
         LocalDate dayStart = LocalDate.now();
         LocalDate dayEnd = LocalDate.now();
-        List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(dayStart, dayEnd).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
+        List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(dayStart, dayEnd);
         dayPlan.setTitle("当天排产数");
         dayPlan.setValue(planNumByDay.size() + "");
         dayPlan.setLinkedUrl("/");
@@ -526,7 +526,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         //周统计
         LocalDate weekStart = LocalDate.now().plusDays(-7);
         LocalDate weekEnd = LocalDate.now();
-        List<String> planNumByWeek = apsOrderPlanDao.findPlanByDate(weekStart, weekEnd).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
+        List<String> planNumByWeek = apsOrderPlanDao.findPlanByDate(weekStart, weekEnd);
         weekPlan.setTitle("周排产数");
         weekPlan.setValue(planNumByWeek.size() + "");
         weekPlan.setLinkedUrl("/");
@@ -557,7 +557,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         //月统计
         LocalDate monthStart = LocalDate.now().plusDays(-30);
         LocalDate monthEnd = LocalDate.now();
-        List<String> planNumByMonth = apsOrderPlanDao.findPlanByDate(monthStart, monthEnd).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
+        List<String> planNumByMonth = apsOrderPlanDao.findPlanByDate(monthStart, monthEnd);
         monthPlan.setTitle("月排产数");
         monthPlan.setValue(planNumByMonth.size() + "");
         monthPlan.setLinkedUrl("/");
@@ -615,7 +615,7 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
         //日统计
         LocalDate dayStart = LocalDate.now().plusDays(-2);
         LocalDate dayEnd = LocalDate.now().plusDays(-2);
-        List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(dayStart, dayEnd).stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
+        List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(dayStart, dayEnd);
         //当天完工数
         List<U9MoFinish> finishListByDay = u9MoFinishDao.findByFinishDateBetween(dayStart, dayEnd.plusDays(1));
         List<String> finishDayMoList=new ArrayList<>();
