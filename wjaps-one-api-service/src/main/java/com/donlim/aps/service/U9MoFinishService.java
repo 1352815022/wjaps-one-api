@@ -146,6 +146,7 @@ public class U9MoFinishService  extends BaseEntityService<U9MoFinish>  {
                 if(!noCalcMaterial.contains(listByOrderNo.getMaterialCode())){
                     u9MoFinishDto.setMaterialCode(listByOrderNo.getMaterialCode());
                     u9MoFinishDto.setMaterialName(listByOrderNo.getMaterialName());
+                    u9MoFinishDto.setId(UUID.randomUUID().toString());
                     dtoList.add(u9MoFinishDto);
                 }
 
