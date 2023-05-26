@@ -9,11 +9,13 @@ import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.changhong.sei.core.utils.ResultDataUtil;
 import com.donlim.aps.api.ScmXbDeliveryApi;
+import com.donlim.aps.convertdto.ConvertToDto;
 import com.donlim.aps.dto.ScmXbDeliveryDto;
 import com.donlim.aps.entity.ScmXbDelivery;
 import com.donlim.aps.entity.cust.OrderChangeCountVO;
 import com.donlim.aps.service.ApsOrderService;
 import com.donlim.aps.service.ScmXbDeliveryService;
+import com.donlim.aps.vo.ScmXbDeliveryVO;
 import io.swagger.annotations.Api;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,27 +55,18 @@ public class ScmXbDeliveryController extends BaseEntityController<ScmXbDelivery,
 
     @Override
     public ResultData updateOrderTask(Map<String, String> params) {
-
         service.updateOrderTask();
         return ResultDataUtil.success("执行成功");
     }
 
     @Override
-    public ResultData<PageResult<ScmXbDeliveryDto>> findByPage(Search search) {
-        PageResult<OrderChangeCountVO> orderChangeCountVOPageResult = service.queryOrderChangeCount(search);
-        ArrayList<OrderChangeCountVO> rows = orderChangeCountVOPageResult.getRows();
-        PageResult<ScmXbDeliveryDto> result = new PageResult<>(orderChangeCountVOPageResult);
-        ModelMapper modelMapper = new ModelMapper();
-        if (Objects.isNull(rows)){
-            return null;
-        }
-        if (CollectionUtils.isEmpty(rows)){
-            result.setRows(new ArrayList<>());
-            return ResultData.success(result);
-        }
-        List<ScmXbDeliveryDto> collect = rows.stream().map(e -> modelMapper.map(e, ScmXbDeliveryDto.class)).collect(Collectors.toList());
-        result.setRows(collect);
-        return ResultData.success(result);
+    public ResultData<List<ScmXbDeliveryDto>> findChange(ScmXbDeliveryVO scmXbDeliveryVO) {
+        List<ScmXbDeliveryDto> scmXbDeliveryDtos = service.findChange(scmXbDeliveryVO).stream().map(ConvertToDto::scmXbDeliveryToDto).collect(Collectors.toList());
+        return ResultData.success(scmXbDeliveryDtos);
+    }
 
+    @Override
+    public ResultData<PageResult<ScmXbDeliveryDto>> findByPage(Search search) {
+        return null;
     }
 }

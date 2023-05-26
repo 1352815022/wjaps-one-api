@@ -178,7 +178,7 @@ public class ScmXbDelivery extends BaseAuditableEntity implements Serializable ,
     /**
      * 送货计划明细
      */
-    @OneToMany(targetEntity = ScmXbDeliveryPlan.class,fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id",insertable = false,updatable = false)
     private List<ScmXbDeliveryPlan> deliveryPlans;
 }

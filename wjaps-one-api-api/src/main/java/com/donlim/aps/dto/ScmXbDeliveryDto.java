@@ -123,22 +123,22 @@ public class ScmXbDeliveryDto extends BaseEntityDto {
      * 应交货数量
      */
     @ApiModelProperty(value = "应交货数量")
-    private String deliveryQty;
+    private BigDecimal deliveryQty;
     /**
      * 日最大需求量
      */
     @ApiModelProperty(value = "日最大需求量")
-    private String dayQty;
+    private BigDecimal dayQty;
     /**
      * 欠发数量
      */
     @ApiModelProperty(value = "欠发数量")
-    private String oweQty;
+    private BigDecimal oweQty;
     /**
      * U9累计到货数量
      */
     @ApiModelProperty(value = "U9累计到货数量")
-    private String sumArrivalQty;
+    private BigDecimal sumArrivalQty;
     /**
      * 采购员
      */

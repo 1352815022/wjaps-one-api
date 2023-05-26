@@ -4,6 +4,7 @@ import com.changhong.sei.core.dao.BaseEntityDao;
 import com.donlim.aps.dto.ScmXbDeliveryQueryDto;
 import com.donlim.aps.entity.ScmXbDelivery;
 import com.donlim.aps.entity.cust.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -43,30 +44,6 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
             " left join ApsOrderExt e  on e.orderNo = p.docNo  " +
             " where not exists (select 1 from ApsOrder i where i.orderNo = p.docNo )")
     List<U9OrderCust> queryInnerOrderAndNotExists();
-    /**
-     * 获取内部待排数据(用于新增) v2.0
-     * SCM
-     * @return
-     */
-    @Query(value = "select * from u9_produce_order p " +
-            "inner join u9_material m on m.id = p.material_id " +
-            "left join scm_xb_delivery d  on d.order_no = p.so_id and d.material_code  = m.code  and d.type = '1'" +
-            "left join aps_order_ext e  on d.order_no = e.order_no " +
-            "where DATE_SUB(CURDATE(), INTERVAL 30 DAY)<=p.created_date and not exists (select 1 from aps_order i where i.order_no = p.doc_no )", nativeQuery = true)
-    List<U9OrderCust> queryInnerOrderAndNotExists_2();
-
-
-    /**
-     * 获取内部待排数据(用于更新)
-     * SCM
-     * @return
-     */
-    @Query("select new com.donlim.aps.entity.cust.OrderAndScm(i,d,o) from ApsOrder i " +
-            " left join U9ProduceOrder o on i.orderNo = o.docNo " +
-            " left join ScmXbDelivery d on i.scmId = d.id and d.type = '1' " +
-            " where i.type= 'INNER' ")
-    List<OrderAndScm> queryInnerOrderAndExists();
-
 
 
     @Query(value = "select " +
@@ -97,16 +74,6 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
 
 
 
-
-
-    /**
-     * 获取委外与采购订单(更新)
-     * @return
-     */
-    @Query("select new com.donlim.aps.entity.cust.OrderAndScm(o,d) " +
-            "from ScmXbDelivery d inner join ApsOrder o on o.scmId = d.id " +
-            "where d.type = '0' " )
-    List<OrderAndScm> queryPurchaseOrderAndExists();
 
     /**
      * 获取委外与采购订单(更新)
@@ -152,12 +119,6 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
      */
     List<ScmXbDelivery>findAllByOrderNo(String orderNo);
 
-    /**
-     * 根据送货日期获取送货计划
-     * @param date
-     * @return
-     */
-    List<ScmXbDelivery>findByDeliveryStartDateAndSupplierCode(LocalDate date,String supplierCode);
 
     List<ScmXbDelivery>findByDeliveryStartDateAfter(LocalDate date);
     /**
@@ -173,6 +134,16 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
             " and (a.deliveryStartDate<=:#{#query.endDate} or :#{#query.endDate} is null)"+
             " and (a.orderNo=:#{#query.orderNo} or :#{#query.orderNo} is null)")
     List<ScmXbDelivery>queryDelivery(@Param("query") ScmXbDeliveryQueryDto query);
+
+    /**
+     * 动态查询
+     * @param spec can be {@literal null}.
+     * @return
+     */
+    List<ScmXbDelivery>findAll(Specification<ScmXbDelivery> spec);
+
+
+
 
 
 }

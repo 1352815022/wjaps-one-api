@@ -35,7 +35,7 @@ public interface U9MoFinishApi extends BaseEntityApi<U9MoFinishDto>, FindByPageA
      * @return 分页查询结果
      */
     @PostMapping(path = "findNoPlan", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "分页查询业务实体", notes = "分页查询业务实体")
+    @ApiOperation(value = "查询没排计划工单", notes = "查询没排计划工单")
     ResultData<List<U9MoFinishDto>> findNoPlan(@RequestBody Search search);
 
 }

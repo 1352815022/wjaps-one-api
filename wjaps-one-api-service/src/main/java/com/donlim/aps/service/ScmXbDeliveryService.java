@@ -10,18 +10,22 @@ import com.changhong.sei.core.log.LogUtil;
 import com.changhong.sei.core.service.BaseEntityService;
 import com.donlim.aps.connector.ScmConnector;
 import com.donlim.aps.dao.*;
+import com.donlim.aps.dao.specification.ScmXbDeliverySpecification;
 import com.donlim.aps.dto.CalcBomDto;
 import com.donlim.aps.dto.MaterialRequireDto;
+import com.donlim.aps.dto.ScmXbDeliveryDto;
 import com.donlim.aps.dto.ScmXbDeliveryQueryDto;
 import com.donlim.aps.entity.*;
 import com.donlim.aps.entity.cust.OrderChangeCountVO;
 import com.donlim.aps.util.BomUtil;
 import com.donlim.aps.util.CompanyEnum;
 import com.donlim.aps.util.DateUtils;
+import com.donlim.aps.vo.ScmXbDeliveryVO;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.query.internal.NativeQueryImpl;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +35,7 @@ import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -135,100 +140,21 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
         LogUtil.bizLog("更新SCM送货订单信息结束耗时{}",t2-t1);
     }
 
-    public PageResult<OrderChangeCountVO> queryOrderChangeCount(Search search) {
-        StringBuilder countSqlBuilder = new StringBuilder();
-        countSqlBuilder.append("select count(*) from scm_xb_delivery a left join aps_order b on a.id = b.scm_id where ( a.change_date_flag = 1 or a.change_qty_flag = 1 ) ");
-        StringBuilder selectSqlBuilder = new StringBuilder();
-        selectSqlBuilder.append("select a.id, b.work_group_name as apsOrderWorkGroupName, b.work_line_name as apsOrderWorkLineName ,a.order_no as orderNo, a.po as po, b.material_code as materialCode\n" +
-                ", b.material_name as materialName, b.material_spec as materialSpec, a.delivery_qty as deliveryQty, a.delivery_old_qty as deliveryOldQty, a.delivery_start_date as deliveryStartDate\n" +
-                ", a.delivery_old_start_date as deliveryOldStartDate,b.status as apsOrderStatus, a.company_name as companyName , a.change_qty_flag as changeQtyFlag , a.change_date_flag as changeDateFlag  \n" +
-                " from scm_xb_delivery a left join aps_order b on a.id = b.scm_id where ( a.change_date_flag = 1 or a.change_qty_flag = 1 ) ");
-        List<SearchFilter> filters = search.getFilters();
-        if (Objects.isNull(filters)) {
-            filters = new ArrayList<>();
+    public List<ScmXbDelivery> findChange(ScmXbDeliveryVO scmXbDeliveryVO) {
+        Specification<ScmXbDelivery> spec = Specification.where(null);
+        if (StringUtils.isNotEmpty(scmXbDeliveryVO.getStartDate()) && StringUtils.isNotEmpty(scmXbDeliveryVO.getEndDate())  ) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate startDate = LocalDate.parse(scmXbDeliveryVO.getStartDate(), formatter);
+            LocalDate endDate = LocalDate.parse(scmXbDeliveryVO.getEndDate(), formatter);
+            spec = spec.and(ScmXbDeliverySpecification.DeliveryStartDateBetween(startDate,endDate));
+        }else{
+            spec = spec.and(ScmXbDeliverySpecification.DeliveryStartDateBetween(LocalDate.now(),LocalDate.now().plusDays(30)));
         }
-        //租户代码
-        String tenantCode = ContextUtil.getTenantCode();
-        if (StringUtils.isNotBlank(tenantCode)) {
-            filters.add(new SearchFilter("a.tenant_code", tenantCode, SearchFilter.Operator.EQ));
+        if(StringUtils.isNotEmpty(scmXbDeliveryVO.getOrderNo())){
+            spec=spec.and(ScmXbDeliverySpecification.orderNoLike(scmXbDeliveryVO.getOrderNo()));
         }
-        if (StringUtils.isNotBlank(search.getQuickSearchValue())) {
-            for (String quickSearchProperty : search.getQuickSearchProperties()) {
-                filters.add(new SearchFilter(quickSearchProperty, search.getQuickSearchValue(), SearchFilter.Operator.LK));
-            }
-        }
-        StringBuilder whereSqlBuilder = new StringBuilder();
-        Map<String, Object> params = new HashMap<>();
-        for (SearchFilter filter : filters) {
-            if (filter.getValue() instanceof LocalDate) {
-                filter.setValue(DateUtils.LocalDateToString((LocalDate) filter.getValue()));
-            }
-            switch (filter.getOperator()) {
-                case EQ:
-                    params.put(filter.getFieldName(), filter.getValue());
-                    whereSqlBuilder.append(" and " + filter.getFieldName()).append(" =  :" + filter.getFieldName());
-                    break;
-                case LK:
-                    params.put(filter.getFieldName(), "%" + filter.getValue().toString() + "%");
-                    whereSqlBuilder.append(" and " + filter.getFieldName()).append(" like  :" + filter.getFieldName());
-                    break;
-                case LLK:
-                    params.put(filter.getFieldName(), filter.getValue().toString() + "%");
-                    whereSqlBuilder.append(" and " + filter.getFieldName()).append(" like  :" + filter.getFieldName());
-                    break;
-                case RLK:
-                    params.put(filter.getFieldName(), "%" + filter.getValue().toString());
-                    whereSqlBuilder.append(" and " + filter.getFieldName()).append(" like  :" + filter.getFieldName());
-                    break;
-                case GT:
-                    params.put(filter.getFieldName(), filter.getValue());
-                    whereSqlBuilder.append(" and " + filter.getFieldName()).append(" >  :" + filter.getFieldName());
-                    break;
-                case LT:
-                    params.put(filter.getFieldName(), filter.getValue());
-                    whereSqlBuilder.append(" and " + filter.getFieldName()).append(" <  :" + filter.getFieldName());
-                    break;
-                case GE:
-                    params.put(filter.getFieldName(), filter.getValue());
-                    whereSqlBuilder.append(" and " + filter.getFieldName()).append(" >=  :" + filter.getFieldName());
-                    break;
-                case LE:
-                    params.put(filter.getFieldName(), filter.getValue());
-                    whereSqlBuilder.append(" and " + filter.getFieldName()).append(" <=  :" + filter.getFieldName());
-                    break;
-                default:
-                    break;
-            }
 
-        }
-        String countSql = countSqlBuilder.append(whereSqlBuilder).toString();
-        Query contQuery = entityManager.createNativeQuery(countSql);
-        setParameters(contQuery, params);
-        Object singleResult = contQuery.getSingleResult();
-        Long count = 0L;
-        if (singleResult != null) {
-            count = Long.parseLong(singleResult.toString());
-        }
-        NativeQueryImpl selectQuery = entityManager.createNativeQuery(selectSqlBuilder.append(whereSqlBuilder).toString()).unwrap(NativeQueryImpl.class);
-        selectQuery.setResultTransformer(Transformers.aliasToBean(OrderChangeCountVO.class));
-        setParameters(selectQuery, params);
-        selectQuery.setFirstResult(search.getPageInfo().getPage() - 1);
-        selectQuery.setMaxResults(search.getPageInfo().getRows());
-        List<OrderChangeCountVO> resultList = selectQuery.getResultList();
-
-        PageResult pageResult = new PageResult();
-        pageResult.setRows(resultList);
-        Long total = count / search.getPageInfo().getRows();
-        Long l = count % search.getPageInfo().getRows();
-        if (l > 0) {
-            total += 1;
-        }
-        pageResult.setRecords(count);
-        pageResult.setTotal(total.intValue());
-        pageResult.setPage(search.getPageInfo().getPage());
-
-        return pageResult;
-
+       return dao.findAll(spec);
 
     }
 
