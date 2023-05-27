@@ -26,14 +26,10 @@ public class ScmXbDeliverySpecification {
         return (root, query, cb) -> cb.like(root.get("orderNo"), orderNo);
     }
 
-    public static Specification<ScmXbDelivery> orderBy() {
-        return (root, query, cb) ->{
-            Predicate predicate = cb.conjunction();
-            Order order=cb.asc(root.get("deliveryStartDate"));
-            query.orderBy(cb.desc(root.get("createdAt")));;
-            return predicate;
-        };
+    public static Specification<ScmXbDelivery> materialCodeLike(String materialCode) {
+        return (root, query, cb) -> cb.like(root.get("materialCode"), materialCode);
     }
-   // Order order = sortOrder.equalsIgnoreCase("desc") ? cb.desc(root.get(sortField)) : cb.asc(root.get(sortField));
-        //    query.orderBy(order);
+    public static Specification<ScmXbDelivery> materialNameLike(String materialName) {
+        return (root, query, cb) -> cb.like(root.get("materialName"), materialName);
+    }
 }

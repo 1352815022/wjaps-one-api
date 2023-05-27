@@ -12,4 +12,7 @@ public class ScmXbDeliveryVO {
     private String startDate;
     private String endDate;
     private String orderNo;
+    private String materialName;
+    private String materialCode;
+
 }

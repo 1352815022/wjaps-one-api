@@ -142,18 +142,23 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
 
     public List<ScmXbDelivery> findChange(ScmXbDeliveryVO scmXbDeliveryVO) {
         Specification<ScmXbDelivery> spec = Specification.where(null);
-        if (StringUtils.isNotEmpty(scmXbDeliveryVO.getStartDate()) && StringUtils.isNotEmpty(scmXbDeliveryVO.getEndDate())  ) {
+        if (StringUtils.isNotEmpty(scmXbDeliveryVO.getStartDate())) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate startDate = LocalDate.parse(scmXbDeliveryVO.getStartDate(), formatter);
-            LocalDate endDate = LocalDate.parse(scmXbDeliveryVO.getEndDate(), formatter);
+            LocalDate endDate =startDate.plusDays(7);
             spec = spec.and(ScmXbDeliverySpecification.DeliveryStartDateBetween(startDate,endDate));
         }else{
-            spec = spec.and(ScmXbDeliverySpecification.DeliveryStartDateBetween(LocalDate.now(),LocalDate.now().plusDays(30)));
+            spec = spec.and(ScmXbDeliverySpecification.DeliveryStartDateBetween(LocalDate.now(),LocalDate.now().plusDays(15)));
         }
         if(StringUtils.isNotEmpty(scmXbDeliveryVO.getOrderNo())){
             spec=spec.and(ScmXbDeliverySpecification.orderNoLike(scmXbDeliveryVO.getOrderNo()));
         }
-
+        if(StringUtils.isNotEmpty(scmXbDeliveryVO.getMaterialName())){
+            spec=spec.and(ScmXbDeliverySpecification.materialNameLike(scmXbDeliveryVO.getMaterialName()));
+        }
+        if(StringUtils.isNotEmpty(scmXbDeliveryVO.getMaterialCode())){
+            spec=spec.and(ScmXbDeliverySpecification.materialCodeLike(scmXbDeliveryVO.getMaterialCode()));
+        }
        return dao.findAll(spec);
 
     }
