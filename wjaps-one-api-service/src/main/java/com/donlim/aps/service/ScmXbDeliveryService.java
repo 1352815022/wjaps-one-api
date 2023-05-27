@@ -140,6 +140,11 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
         LogUtil.bizLog("更新SCM送货订单信息结束耗时{}",t2-t1);
     }
 
+    /**
+     * 查找变更内容
+     * @param scmXbDeliveryVO
+     * @return
+     */
     public List<ScmXbDelivery> findChange(ScmXbDeliveryVO scmXbDeliveryVO) {
         Specification<ScmXbDelivery> spec = Specification.where(null);
         if (!Objects.isNull(scmXbDeliveryVO.getStartDate())){

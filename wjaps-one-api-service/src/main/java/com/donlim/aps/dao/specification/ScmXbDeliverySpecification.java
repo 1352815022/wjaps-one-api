@@ -8,8 +8,10 @@ import javax.persistence.criteria.Predicate;
 import javax.xml.soap.SAAJResult;
 import java.time.LocalDate;
 
+/**
+ * ScmXbDelivery动态查询类
+ */
 public class ScmXbDeliverySpecification {
-
     public static Specification<ScmXbDelivery> DeliveryStartDateBetween(LocalDate start, LocalDate end) {
         return (root, query, cb) ->{
             Predicate predicate = cb.conjunction();
@@ -18,14 +20,10 @@ public class ScmXbDeliverySpecification {
             query.orderBy(cb.asc(root.get("deliveryStartDate")));
             return predicate;
         };
-
-
     }
-
     public static Specification<ScmXbDelivery> orderNoLike(String orderNo) {
         return (root, query, cb) -> cb.like(root.get("orderNo"), "%"+orderNo+"%");
     }
-
     public static Specification<ScmXbDelivery> materialCodeLike(String materialCode) {
         return (root, query, cb) -> cb.like(root.get("materialCode"), "%"+materialCode+"%");
     }
