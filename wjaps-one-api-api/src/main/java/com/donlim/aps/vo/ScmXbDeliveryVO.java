@@ -9,8 +9,8 @@ import java.time.LocalDate;
  */
 @Data
 public class ScmXbDeliveryVO {
-    private String startDate;
-    private String endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private String orderNo;
     private String materialName;
     private String materialCode;

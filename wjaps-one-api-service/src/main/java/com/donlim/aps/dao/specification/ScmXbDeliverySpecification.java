@@ -23,13 +23,13 @@ public class ScmXbDeliverySpecification {
     }
 
     public static Specification<ScmXbDelivery> orderNoLike(String orderNo) {
-        return (root, query, cb) -> cb.like(root.get("orderNo"), orderNo);
+        return (root, query, cb) -> cb.like(root.get("orderNo"), "%"+orderNo+"%");
     }
 
     public static Specification<ScmXbDelivery> materialCodeLike(String materialCode) {
-        return (root, query, cb) -> cb.like(root.get("materialCode"), materialCode);
+        return (root, query, cb) -> cb.like(root.get("materialCode"), "%"+materialCode+"%");
     }
     public static Specification<ScmXbDelivery> materialNameLike(String materialName) {
-        return (root, query, cb) -> cb.like(root.get("materialName"), materialName);
+        return (root, query, cb) -> cb.like(root.get("materialName"), "%"+materialName+"%");
     }
 }

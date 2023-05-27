@@ -142,11 +142,9 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
 
     public List<ScmXbDelivery> findChange(ScmXbDeliveryVO scmXbDeliveryVO) {
         Specification<ScmXbDelivery> spec = Specification.where(null);
-        if (StringUtils.isNotEmpty(scmXbDeliveryVO.getStartDate())) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate startDate = LocalDate.parse(scmXbDeliveryVO.getStartDate(), formatter);
-            LocalDate endDate =startDate.plusDays(7);
-            spec = spec.and(ScmXbDeliverySpecification.DeliveryStartDateBetween(startDate,endDate));
+        if (!Objects.isNull(scmXbDeliveryVO.getStartDate())){
+            LocalDate endDate =scmXbDeliveryVO.getStartDate().plusDays(7);
+            spec = spec.and(ScmXbDeliverySpecification.DeliveryStartDateBetween(scmXbDeliveryVO.getStartDate(),endDate));
         }else{
             spec = spec.and(ScmXbDeliverySpecification.DeliveryStartDateBetween(LocalDate.now(),LocalDate.now().plusDays(15)));
         }
@@ -160,7 +158,6 @@ public class ScmXbDeliveryService extends BaseEntityService<ScmXbDelivery> {
             spec=spec.and(ScmXbDeliverySpecification.materialCodeLike(scmXbDeliveryVO.getMaterialCode()));
         }
        return dao.findAll(spec);
-
     }
 
     private void setParameters(Query query, Map<String, Object> params) {
