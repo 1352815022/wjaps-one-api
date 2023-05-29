@@ -2,11 +2,15 @@ package com.donlim.aps.dao;
 
 import com.changhong.sei.core.dao.BaseEntityDao;
 import com.donlim.aps.dto.ApsOrderType;
+import com.donlim.aps.dto.OrderStatusType;
 import com.donlim.aps.entity.ApsOrder;
 import com.donlim.aps.entity.cust.OrderAndPurchasePlan;
 import com.donlim.aps.entity.cust.OrderAndScm;
+import feign.Param;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -66,7 +70,10 @@ public interface ApsOrderDao extends BaseEntityDao<ApsOrder> {
      */
     List<ApsOrder>findByOrderNoIn(List<String>orderNoList);
 
-
+    @Transactional
+    @Modifying
+    @Query("UPDATE ApsOrder o SET o.status = :status WHERE o.status<>:status and  o.orderNo in :orderNos")
+    void updateApsOrderStatus(@Param("status") OrderStatusType status, @Param("orderNos") List<String> orderNos);
 
 
 }

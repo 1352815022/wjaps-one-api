@@ -55,6 +55,8 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
     private McasYieldDao mcasYieldDao;
     @Autowired
     private U9MoFinishDao u9MoFinishDao;
+    @Autowired
+    private U9ProduceOrderDao u9ProduceOrderDao;
 
 
     @Override
@@ -731,31 +733,21 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
      */
     @Transactional(rollbackFor = Exception.class)
     public void updateOrderPlanToFinish() {
-        List<ApsOrderPlan> apsOrderNormalPlans = dao.findAllByStatus(OrderStatusType.Normal).stream().collect(Collectors.toList());
-       // apsOrderNormalPlans= apsOrderNormalPlans.stream().filter(a->a.getId().equals("00207CB4-4B96-11ED-8322-0242AC120021")).collect(Collectors.toList());
+        long s = System.currentTimeMillis();
+        List<ApsOrderPlan> apsOrderPlanList = dao.findAllByStatus(OrderStatusType.Normal);
+        List<String> orders = apsOrderPlanList.stream().map(a -> a.getOrder().getOrderNo()).collect(Collectors.toList());
         List<ApsOrderPlan>finsishPlan=new ArrayList<>();
-        for (ApsOrderPlan apsOrderNormalPlan : apsOrderNormalPlans) {
-            boolean flag=false;
-            //检查数量是否排完
-            BigDecimal planQty = apsOrderNormalPlan.getOrderPlanDetails().stream().map(ApsOrderPlanDetail::getPlanQty).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
-            if(apsOrderNormalPlan.getOrder()!=null &&  apsOrderNormalPlan.getOrder().getOrderQty()!=null && apsOrderNormalPlan.getOrder().getOrderQty().compareTo(planQty)==0){
-                //检查是否所有计划都已经完成
-               // LocalDate planDate=LocalDate.now().plusDays(-7);
-                ApsOrderPlanDetail apsOrderPlanDetail = apsOrderNormalPlan.getOrderPlanDetails().stream().max(Comparator.comparing(ApsOrderPlanDetail::getPlanDate)).get();
-                if(apsOrderPlanDetail.getPlanDate().isBefore(LocalDate.now().plusDays(-2))){
-                    flag=true;
-
-                }
-            }
-            if(flag){
-                apsOrderNormalPlan.setStatus(OrderStatusType.Completed);
-                finsishPlan.add(apsOrderNormalPlan);
+        List<String> completeOrders = u9ProduceOrderDao.findCompleteOrder(orders);
+        for (ApsOrderPlan apsOrderPlan : apsOrderPlanList) {
+            if(completeOrders.contains(apsOrderPlan.getOrder().getOrderNo())) {
+                apsOrderPlan.setStatus(OrderStatusType.Completed);
+                finsishPlan.add(apsOrderPlan);
             }
         }
-        List<ApsOrder> apsOrderList = apsOrderDao.findAllById(finsishPlan.stream().map(a -> a.getOrderId()).distinct().collect(Collectors.toList()));
-        apsOrderList.forEach(a->a.setStatus(OrderStatusType.Completed));
         save(finsishPlan);
-        apsOrderDao.save(apsOrderList);
+        apsOrderDao.updateApsOrderStatus(OrderStatusType.Completed,completeOrders);
+        long e = System.currentTimeMillis();
+        LogUtil.bizLog("更新计划状态为完工耗时："+(e-s));
     }
 
 

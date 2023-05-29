@@ -89,5 +89,6 @@ public interface U9ProduceOrderDao extends BaseEntityDao<U9ProduceOrder> {
      * @return
      */
     List<U9ProduceOrder>findAllBySoIdAndMaterialCode(String orderNo,String materialCode);
-
+    @Query("select docNo from U9ProduceOrder where status=3 and docNo in :orderList")
+    List<String> findCompleteOrder(List<String>orderList);
 }
