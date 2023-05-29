@@ -746,7 +746,6 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
                     flag=true;
 
                 }
-
             }
             if(flag){
                 apsOrderNormalPlan.setStatus(OrderStatusType.Completed);

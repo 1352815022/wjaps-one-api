@@ -613,8 +613,8 @@ public class ApsOrderService extends BaseEntityService<ApsOrder> {
     public void updateDayStatistics() {
         List<String> noCalcMaterial = u9MaterialDao.findByCalcIsFalse().stream().map(a -> a.getCode()).collect(Collectors.toList());
         //日统计
-        LocalDate dayStart = LocalDate.now().plusDays(-2);
-        LocalDate dayEnd = LocalDate.now().plusDays(-2);
+        LocalDate dayStart = LocalDate.now();
+        LocalDate dayEnd = LocalDate.now();
         List<String> planNumByDay = apsOrderPlanDao.findPlanByDate(dayStart, dayEnd);
         //当天完工数
         List<U9MoFinish> finishListByDay = u9MoFinishDao.findByFinishDateBetween(dayStart, dayEnd.plusDays(1));
