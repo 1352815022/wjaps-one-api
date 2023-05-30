@@ -133,8 +133,6 @@ public class U9MaterialService extends BaseEntityService<U9Material> {
                 if(StringUtils.isNumeric(powerDTO.getSortNo())&& StringUtils.isNotBlank(powerDTO.getCapacity())&& parseInterger(powerDTO.getCapacity())){
                     sortNo=Integer.parseInt(powerDTO.getSortNo());
                     capacity=new BigDecimal(Math.round(Math.ceil(Double.parseDouble(powerDTO.getCapacity()))));
-                    //小时产能*8
-                    capacity=  capacity.multiply(new BigDecimal(8));
                     if (materialSortMaxNo.containsKey(powerDTO.getMaterialCode())) {
                         if (sortNo > materialSortMaxNo.get(powerDTO.getMaterialCode())) {
                             u9Material.setCapacity(capacity);
