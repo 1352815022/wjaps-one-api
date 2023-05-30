@@ -67,9 +67,9 @@ public class McasYieldService extends BaseEntityService<McasYield> {
         //    dao.save(yieldData);
             //重新计算进度表
            // apsProductionProcessScheduleService.calcProductionProcessSchedule(date);
-            if(LocalDateTime.now().getHour()==7) {
-                apsOrderPlanService.updatePlanFormU9();
-            }
+         //   if(LocalDateTime.now().getHour()==7) {
+          //      apsOrderPlanService.updatePlanFormU9();
+          //  }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,9 +104,9 @@ public class McasYieldService extends BaseEntityService<McasYield> {
             dao.save(yieldData);
             //重新计算进度表
             apsProductionProcessScheduleService.calcProductionProcessSchedule(date);
-            if(LocalDateTime.now().getHour() == 7) {
+           /* if(LocalDateTime.now().getHour() == 7) {
                 apsOrderPlanService.updatePlanFromMcas();
-            }
+            }*/
             TransactionUtil.commit(saveStatus);
         }catch (Exception e){
             TransactionUtil.rollback(saveStatus);

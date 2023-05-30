@@ -11,6 +11,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -166,7 +167,7 @@ public class ApsOrderPlanDto extends BaseEntityDto {
     /**
      * 最后修改时间
      */
-    @JsonFormat(pattern = DateUtils.DEFAULT_DATE_FORMAT)
-    protected LocalDate lastEditedDate;
+    @JsonFormat(pattern = DateUtils.DEFAULT_TIME_FORMAT)
+    protected LocalDateTime lastEditedDate;
 
 }

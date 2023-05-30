@@ -40,13 +40,15 @@ public class ApsOpenController implements ApsOpenApi {
     @Override
     public ResultData<ApsPlanDto> getPlanByDate(String date) {
         //取7天内的排产数量
-        LocalDate localDate = LocalDate.parse(date , DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate start = LocalDate.parse(date , DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate end = start.plusDays(15);
         ApsPlanDto apsPlanDto=new ApsPlanDto();
-        List<ApsOrderPlanDetail> allByPlanDate = apsOrderPlanDetailDao.findAllByPlanDate(localDate,localDate)
+        List<ApsOrderPlanDetail> allByPlanDate = apsOrderPlanDetailDao.findAllByPlanDate(start,end)
                 .stream().filter(a->a.getApsOrderPlan().getStatus().name().equals("Normal")).collect(Collectors.toList());
         List<ApsPlanDetailDto> detailList=new ArrayList<>();
         for (ApsOrderPlanDetail plan : allByPlanDate) {
             ApsPlanDetailDto detail=new ApsPlanDetailDto();
+            detail.setId(plan.getId());
             detail.setPlanQty(plan.getPlanQty());
             detail.setDocNo(plan.getApsOrderPlan().getOrder().getOrderNo());
             detail.setWorkGroup(plan.getApsOrderPlan().getWorkGroupName());

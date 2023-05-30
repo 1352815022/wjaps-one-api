@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class ApsPlanDetailDto {
-
+    private String id;
     private BigDecimal planQty;
     private String docNo;
     private String workGroup;
