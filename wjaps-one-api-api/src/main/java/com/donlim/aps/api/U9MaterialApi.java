@@ -54,6 +54,6 @@ public interface U9MaterialApi extends BaseEntityApi<U9MaterialDto> , FindByPage
      * @throws IOException
      */
     @PostMapping(path = "uploadMaterialType")
-    @ApiOperation(value = "导入清洗/喷粉配置",notes = "导入清洗/喷粉配置")
+    @ApiOperation(value = "导入不计算的料号",notes = "导入不计算的料号")
     ResultData<String> uploadMaterialType(@RequestBody List<U9MaterialDto> list) throws IOException;
 }
