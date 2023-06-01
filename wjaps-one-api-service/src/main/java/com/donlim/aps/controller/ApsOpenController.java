@@ -56,9 +56,11 @@ public class ApsOpenController implements ApsOpenApi {
             U9ProduceOrder produceOrder = u9ProduceOrderDao.findAllByDocNo(detail.getDocNo());
             detail.setMoId(produceOrder.getId());
             detail.setStatus(produceOrder.getStatus());
+            detail.setPlanDate(plan.getPlanDate());
             detailList.add(detail);
         }
         apsPlanDto.setApsPlanDetailDtoList(detailList);
         return ResultData.success(apsPlanDto);
     }
+    
 }
