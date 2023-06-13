@@ -69,7 +69,7 @@ public interface ScmXbDeliveryDao extends BaseEntityDao<ScmXbDelivery> {
             "    aps_order_ext e " +
             "        on i.order_no = e.order_no " +
             "where " +
-            "    i.type= 'INNER' and DATE_SUB(CURDATE(), INTERVAL 30 DAY)<=o.created_date " , nativeQuery = true)
+            "    i.u9_status <>'Completed' and i.type= 'INNER' and DATE_SUB(CURDATE(), INTERVAL 30 DAY)<=o.created_date " , nativeQuery = true)
     List<Map<String,Object>> queryInnerOrderAndExists_v2();
 
 
