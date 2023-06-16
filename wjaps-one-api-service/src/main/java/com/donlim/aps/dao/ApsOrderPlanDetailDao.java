@@ -33,7 +33,8 @@ public interface ApsOrderPlanDetailDao extends BaseEntityDao<ApsOrderPlanDetail>
             " where a.status='Normal' and b.planDate=:date")
     List<ApsOrderPlanDetail> findAllByPlanDate(LocalDate date);
 
-    @Query("select new com.donlim.aps.dto.open.ApsPlanDetailDto(b.id,b.planQty,b.planDate,c.orderNo,a.workGroupName,a.lineName,c.id,d.status) from ApsOrderPlan a   join fetch ApsOrderPlanDetail b on a.id = b.planId " +
+    @Query("select new com.donlim.aps.dto.open.ApsPlanDetailDto(b.id,b.planQty,b.planDate,c.orderNo,a.workGroupName,a.lineName,d.id,d.status) from ApsOrderPlan a " +
+            "join fetch ApsOrderPlanDetail b on a.id = b.planId " +
             "join fetch ApsOrder c on a.orderId=c.id " +
             "join fetch U9ProduceOrder d on c.orderNo=d.docNo"+
             " where a.status='Normal' and b.planQty>0 and b.planDate>=:start and b.planDate<=:end")
