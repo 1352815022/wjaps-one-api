@@ -24,4 +24,17 @@ public class ApsPlanDetailDto {
     private Integer status;
     private LocalDate planDate;
 
+    public ApsPlanDetailDto() {
+    }
+    public ApsPlanDetailDto(String id, BigDecimal planQty, LocalDate planDate, String docNo, String workGroup, String line, String moId, Integer status) {
+        this.id = id;
+        this.planQty = planQty;
+        this.docNo = docNo;
+        this.workGroup = workGroup;
+        this.line = line;
+        this.moId = moId;
+        this.status = status;
+        this.planDate = planDate;
+    }
+
 }

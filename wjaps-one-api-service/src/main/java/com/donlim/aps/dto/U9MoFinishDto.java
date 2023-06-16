@@ -19,6 +19,7 @@ import java.util.Date;
  * @since 2023-04-08 11:27:31
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 @ApiModel(description = "U9数据扩展字段DTO")
 public class U9MoFinishDto extends BaseEntityDto {
     private static final long serialVersionUID = 729699186384623251L;

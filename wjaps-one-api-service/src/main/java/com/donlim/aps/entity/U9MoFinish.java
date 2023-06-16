@@ -3,6 +3,7 @@ package com.donlim.aps.entity;
 import com.changhong.sei.core.entity.BaseAuditableEntity;
 import com.changhong.sei.core.entity.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -26,6 +27,7 @@ import java.util.Date;
 @DynamicInsert
 @DynamicUpdate
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class U9MoFinish extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -18921762760490670L;
 

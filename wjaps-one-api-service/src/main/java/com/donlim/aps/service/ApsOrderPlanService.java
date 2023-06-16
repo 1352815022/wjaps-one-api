@@ -105,7 +105,7 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
      */
     @Transactional
     public PageResult findPlanByPage(Search search, Integer cols) {
-        LocalDate startDate = LocalDate.now().plusDays(-15);
+        LocalDate startDate = LocalDate.now().plusDays(-1);
         search.addFilter(new SearchFilter("startDate", startDate, SearchFilter.Operator.GE));
         search.addFilter(new SearchFilter("endDate", startDate.plusDays(cols + 15), SearchFilter.Operator.LE));
         PageResult<ApsOrderPlan> plans = this.findByPage(search);

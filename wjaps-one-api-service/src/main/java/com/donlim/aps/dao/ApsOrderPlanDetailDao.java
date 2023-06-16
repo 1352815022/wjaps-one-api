@@ -2,6 +2,7 @@ package com.donlim.aps.dao;
 
 import com.changhong.sei.core.dao.BaseEntityDao;
 import com.donlim.aps.dto.ApsDayPlanReportDto;
+import com.donlim.aps.dto.open.ApsPlanDetailDto;
 import com.donlim.aps.entity.ApsOrderPlanDetail;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,9 +33,11 @@ public interface ApsOrderPlanDetailDao extends BaseEntityDao<ApsOrderPlanDetail>
             " where a.status='Normal' and b.planDate=:date")
     List<ApsOrderPlanDetail> findAllByPlanDate(LocalDate date);
 
-    @Query("select b from ApsOrderPlan a inner join ApsOrderPlanDetail b on a.id = b.planId " +
+    @Query("select new com.donlim.aps.dto.open.ApsPlanDetailDto(b.id,b.planQty,b.planDate,c.orderNo,a.workGroupName,a.lineName,c.id,d.status) from ApsOrderPlan a   join fetch ApsOrderPlanDetail b on a.id = b.planId " +
+            "join fetch ApsOrder c on a.orderId=c.id " +
+            "join fetch U9ProduceOrder d on c.orderNo=d.docNo"+
             " where a.status='Normal' and b.planQty>0 and b.planDate>=:start and b.planDate<=:end")
-    List<ApsOrderPlanDetail> findAllByPlanDate(LocalDate start,LocalDate end);
+    List<ApsPlanDetailDto> findAllByPlanDate(LocalDate start, LocalDate end);
     /**
      * 根据日期范围获取内排单id
      *

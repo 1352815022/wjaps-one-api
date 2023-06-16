@@ -2,6 +2,7 @@ package com.donlim.aps.entity;
 
 import com.changhong.sei.core.entity.BaseAuditableEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -22,6 +23,7 @@ import java.util.List;
 @DynamicInsert
 @DynamicUpdate
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ApsPurchasePlan extends BaseAuditableEntity implements Serializable {
     private static final long serialVersionUID = -62333276591878401L;
     /**

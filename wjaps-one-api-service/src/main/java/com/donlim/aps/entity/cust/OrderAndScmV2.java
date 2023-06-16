@@ -2,6 +2,7 @@ package com.donlim.aps.entity.cust;
 
 import com.donlim.aps.entity.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
  * @Date 2022/5/26 10:22
  **/
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class OrderAndScmV2  extends ApsOrder{
 
     //private ApsOrder apsOrder ;

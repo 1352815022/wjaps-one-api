@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ import java.util.Date;
  */
 @ApiModel(description = "生产计划表(内部)DTO")
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ApsOrderPlanDto extends BaseEntityDto {
     private static final long serialVersionUID = -55777916414295323L;
     /**

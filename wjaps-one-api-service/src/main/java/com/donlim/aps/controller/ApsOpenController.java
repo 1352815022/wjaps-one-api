@@ -43,23 +43,9 @@ public class ApsOpenController implements ApsOpenApi {
         LocalDate start = LocalDate.parse(date , DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDate end = start.plusDays(15);
         ApsPlanDto apsPlanDto=new ApsPlanDto();
-        List<ApsOrderPlanDetail> allByPlanDate = apsOrderPlanDetailDao.findAllByPlanDate(start,end)
-                .stream().filter(a->a.getApsOrderPlan().getStatus().name().equals("Normal")).collect(Collectors.toList());
-        List<ApsPlanDetailDto> detailList=new ArrayList<>();
-        for (ApsOrderPlanDetail plan : allByPlanDate) {
-            ApsPlanDetailDto detail=new ApsPlanDetailDto();
-            detail.setId(plan.getId());
-            detail.setPlanQty(plan.getPlanQty());
-            detail.setDocNo(plan.getApsOrderPlan().getOrder().getOrderNo());
-            detail.setWorkGroup(plan.getApsOrderPlan().getWorkGroupName());
-            detail.setLine(plan.getApsOrderPlan().getLineName());
-            U9ProduceOrder produceOrder = u9ProduceOrderDao.findAllByDocNo(detail.getDocNo());
-            detail.setMoId(produceOrder.getId());
-            detail.setStatus(produceOrder.getStatus());
-            detail.setPlanDate(plan.getPlanDate());
-            detailList.add(detail);
-        }
-        apsPlanDto.setApsPlanDetailDtoList(detailList);
+        List<ApsPlanDetailDto> allByPlanDate = apsOrderPlanDetailDao.findAllByPlanDate(start,end);
+
+        apsPlanDto.setApsPlanDetailDtoList(allByPlanDate);
         return ResultData.success(apsPlanDto);
     }
     
