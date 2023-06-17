@@ -15,6 +15,7 @@ import com.donlim.aps.service.ApsOrderPlanService;
 import com.donlim.aps.service.ApsOrderPlanSonDetailService;
 import com.donlim.aps.util.ColumnUtils;
 import com.donlim.aps.util.ResultEnum;
+import com.donlim.aps.vo.PlanSearchVo;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +57,8 @@ public class ApsOrderPlanController extends BaseEntityController<ApsOrderPlan, A
     }
 
     @Override
-    public ResultData<PageResult> findPlanByPage(ColsAndSearch params) {
-        return ResultData.success(service.findPlanByPage(params, params.getCols()));
+    public ResultData<List<Map<String, Object>>> findPlanByPage(PlanSearchVo planSearchVo) {
+        return ResultData.success(service.findPlanByPage(planSearchVo));
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.donlim.aps.dto.ApsOrderPlanAndDetailsDto;
 import com.donlim.aps.dto.ApsOrderPlanDto;
 import com.donlim.aps.dto.ColsAndSearch;
 import com.donlim.aps.dto.ColumnDto;
+import com.donlim.aps.vo.PlanSearchVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -38,7 +39,7 @@ public interface ApsOrderPlanApi extends BaseEntityApi<ApsOrderPlanDto> {
      */
     @PostMapping(path = "find",consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "分页查询", notes = "分页查询")
-    ResultData<PageResult> findPlanByPage(@RequestBody ColsAndSearch search);
+    ResultData<List<Map<String, Object>>> findPlanByPage(@RequestBody PlanSearchVo search);
 
     /**
      * 获取动态列

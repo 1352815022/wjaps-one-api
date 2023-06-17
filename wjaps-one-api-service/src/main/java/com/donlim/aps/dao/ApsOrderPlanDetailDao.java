@@ -2,8 +2,10 @@ package com.donlim.aps.dao;
 
 import com.changhong.sei.core.dao.BaseEntityDao;
 import com.donlim.aps.dto.ApsDayPlanReportDto;
+import com.donlim.aps.dto.PlanDto;
 import com.donlim.aps.dto.open.ApsPlanDetailDto;
 import com.donlim.aps.entity.ApsOrderPlanDetail;
+import com.donlim.aps.vo.PlanSearchVo;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -33,12 +35,37 @@ public interface ApsOrderPlanDetailDao extends BaseEntityDao<ApsOrderPlanDetail>
             " where a.status='Normal' and b.planDate=:date")
     List<ApsOrderPlanDetail> findAllByPlanDate(LocalDate date);
 
+    /**
+     *  根据日期范围获取内排单(供外部调用)
+     * @param start
+     * @param end
+     * @return
+     */
     @Query("select new com.donlim.aps.dto.open.ApsPlanDetailDto(b.id,b.planQty,b.planDate,c.orderNo,a.workGroupName,a.lineName,d.id,d.status) from ApsOrderPlan a " +
             "join fetch ApsOrderPlanDetail b on a.id = b.planId " +
             "join fetch ApsOrder c on a.orderId=c.id " +
             "join fetch U9ProduceOrder d on c.orderNo=d.docNo"+
             " where a.status='Normal' and b.planQty>0 and b.planDate>=:start and b.planDate<=:end")
     List<ApsPlanDetailDto> findAllByPlanDate(LocalDate start, LocalDate end);
+
+    /**
+     *  根据日期范围获取内排单(供外部调用)
+     * @param start
+     * @param end
+     * @return
+     */
+    @Query("select new com.donlim.aps.dto.PlanDto(a,b,c) from ApsOrderPlan a " +
+            "join fetch ApsOrderPlanDetail b on a.id = b.planId "+
+            "join fetch ApsOrder c on a.orderId=c.id " +
+            " where a.status='Normal' and b.planQty>0 and b.planDate>= :#{#planSearchVo.startDate} and b.planDate<=:#{#planSearchVo.endDate}"+
+            " and (a.workGroupId = :#{#planSearchVo.workGroupId} or :#{#planSearchVo.workGroupId} is null)"+
+            " and (c.orderNo = :#{#planSearchVo.orderNo} or :#{#planSearchVo.orderNo} is null)"+
+            " and (a.lineId = :#{#planSearchVo.lineId} or :#{#planSearchVo.lineId} is null)"+
+            " and (a.materialCode = :#{#planSearchVo.materialCode} or :#{#planSearchVo.materialCode} is null)"+
+            " and (a.materialName = :#{#planSearchVo.materialName} or :#{#planSearchVo.materialName} is null)"+
+            " and (a.materialSpec = :#{#planSearchVo.materialSpec} or :#{#planSearchVo.materialSpec} is null)"
+    )
+    List<PlanDto> findByPlanDate(@Param("planSearchVo")PlanSearchVo planSearchVo);
     /**
      * 根据日期范围获取内排单id
      *

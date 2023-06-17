@@ -2,6 +2,7 @@ package com.donlim.aps.service;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.changhong.sei.core.dao.BaseEntityDao;
+import com.changhong.sei.core.dto.ResultData;
 import com.changhong.sei.core.dto.serach.PageResult;
 import com.changhong.sei.core.dto.serach.Search;
 import com.changhong.sei.core.dto.serach.SearchFilter;
@@ -12,9 +13,13 @@ import com.donlim.aps.dao.*;
 import com.donlim.aps.dto.ApsOrderDto;
 import com.donlim.aps.dto.CalcByCapactityDto;
 import com.donlim.aps.dto.OrderStatusType;
+import com.donlim.aps.dto.PlanDto;
 import com.donlim.aps.dto.pull.ModifyFinishQtyParamDto;
 import com.donlim.aps.entity.*;
+import com.donlim.aps.util.DateUtils;
 import com.donlim.aps.util.ReflectUtils;
+import com.donlim.aps.vo.PlanSearchVo;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,28 +109,23 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
      * @return PageResult
      */
     @Transactional
-    public PageResult findPlanByPage(Search search, Integer cols) {
-        LocalDate startDate = LocalDate.now().plusDays(-1);
-        search.addFilter(new SearchFilter("startDate", startDate, SearchFilter.Operator.GE));
-        search.addFilter(new SearchFilter("endDate", startDate.plusDays(cols + 15), SearchFilter.Operator.LE));
-        PageResult<ApsOrderPlan> plans = this.findByPage(search);
-        ArrayList<ApsOrderPlan> plansRows = plans.getRows();
-        List<Map> colsRows = new ArrayList<>();
-        for (ApsOrderPlan plan : plansRows) {
-            Map<String, Object> map = toMapDto(plan);
-            List<ApsOrderPlanDetail> orderPlanDetails = plan.getOrderPlanDetails();
-            for (ApsOrderPlanDetail detail : orderPlanDetails) {
-                LocalDate planDate = detail.getPlanDate();
-                map.put(planDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), detail.getPlanQty());
-            }
-            BigDecimal finishQty = plan.getOrder().getFinishQty();
-            map.put("hasQty",finishQty);
-            map.remove("orderPlanDetails");
+    public List<Map<String, Object>>findPlanByPage(PlanSearchVo planSearchVo) {
+         LocalDate startDate = LocalDate.now().plusDays(-1);
+        LocalDate endDate =LocalDate.now().plusDays(15);
+        planSearchVo.setStartDate(startDate);
+        planSearchVo.setEndDate(endDate);
+        List<PlanDto> allByPlanDate = apsOrderPlanDetailDao.findByPlanDate(planSearchVo);
+        List<String> planIds = allByPlanDate.stream().map(a -> a.getApsOrderPlan().getId()).distinct().collect(Collectors.toList());
+        List<Map<String, Object>> colsRows = new ArrayList<>();
+        for (String planId : planIds) {
+            PlanDto planDto = allByPlanDate.stream().filter(a -> a.getApsOrderPlan().getId().equals(planId)).findFirst().get();
+            Map<String, Object> map = toMapDto(planDto.getApsOrderPlan(), planDto.getApsOrder());
+            allByPlanDate.stream().filter(plan -> plan.getApsOrderPlanDetail().getPlanId().equals(planDto.getApsOrderPlan().getId())).forEach(plan -> {
+                map.put(DateUtils.localDateToString(plan.getApsOrderPlanDetail().getPlanDate()),plan.getApsOrderPlanDetail().getPlanQty());
+            });
             colsRows.add(map);
         }
-        PageResult result = new PageResult(plans);
-        result.setRows(colsRows);
-        return result;
+        return colsRows;
     }
 
     /**
@@ -751,12 +751,12 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
     }
 
 
-    private Map<String, Object> toMapDto(ApsOrderPlan plan) {
+    private Map<String, Object> toMapDto(ApsOrderPlan plan, ApsOrder apsOrder) {
         Map<String, Object> result = new HashMap<>();
         result.put("id", plan.getId());
         result.put("orderId", plan.getOrderId());
-        result.put("orderNo", plan.getOrder().getOrderNo());
-        result.put("orderQty", plan.getOrder().getOrderQty());
+        result.put("orderNo", apsOrder.getOrderNo());
+        result.put("orderQty", apsOrder.getOrderQty());
         result.put("deliveryDate", plan.getDeliveryDate());
         result.put("awaitQty", plan.getAwaitQty());
         result.put("hasQty", plan.getHasQty());
@@ -784,7 +784,6 @@ public class ApsOrderPlanService extends BaseEntityService<ApsOrderPlan> {
         result.put("lastEditedDate",plan.getLastEditedDate());
         return result;
     }
-
 
     /**
      * 批量修改完工数量
